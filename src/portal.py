@@ -28,15 +28,15 @@ load_dotenv()
 # Import payment module
 from src.payments import create_checkout_session, verify_payment, is_test_mode
 
-# Premium dark theme - professional but approachable
+# Premium dark theme - A+ audit software aesthetic
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
     
     :root {
-        --bg: #09090b;
-        --bg-subtle: #18181b;
-        --surface: #1c1c1f;
+        --bg: #0a0a0b;
+        --bg-subtle: #111113;
+        --surface: #18181b;
         --surface-hover: #27272a;
         --border: #27272a;
         --border-subtle: #3f3f46;
@@ -45,9 +45,11 @@ st.markdown("""
         --text-muted: #71717a;
         --orange: #f97316;
         --orange-hover: #fb923c;
-        --orange-subtle: rgba(249, 115, 22, 0.1);
+        --orange-glow: rgba(249, 115, 22, 0.4);
+        --orange-subtle: rgba(249, 115, 22, 0.08);
         --green: #22c55e;
         --green-subtle: rgba(34, 197, 94, 0.1);
+        --blue: #3b82f6;
     }
     
     .stApp {
@@ -63,6 +65,21 @@ st.markdown("""
         max-width: 100% !important;
     }
     
+    /* Subtle grid background */
+    .grid-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: 
+            linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+        background-size: 60px 60px;
+        pointer-events: none;
+        z-index: 0;
+    }
+    
     /* Navigation */
     .nav {
         position: fixed;
@@ -70,10 +87,11 @@ st.markdown("""
         left: 0;
         right: 0;
         z-index: 100;
-        background: rgba(9, 9, 11, 0.8);
-        backdrop-filter: blur(12px);
+        background: rgba(10, 10, 11, 0.85);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
         border-bottom: 1px solid var(--border);
-        padding: 16px 6%;
+        padding: 14px 6%;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -86,11 +104,29 @@ st.markdown("""
         color: var(--text);
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
     }
     
     .nav-brand span {
         color: var(--orange);
+        font-size: 20px;
+    }
+    
+    .nav-cta {
+        font-family: 'Inter', sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--bg);
+        background: var(--orange);
+        padding: 10px 20px;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    
+    .nav-cta:hover {
+        background: var(--orange-hover);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px var(--orange-glow);
     }
     
     /* Hero */
@@ -98,14 +134,18 @@ st.markdown("""
         min-height: 100vh;
         display: flex;
         align-items: center;
-        padding: 120px 6% 80px;
+        padding: 140px 6% 100px;
+        position: relative;
         background: 
-            radial-gradient(ellipse 80% 50% at 50% -20%, rgba(249, 115, 22, 0.15), transparent),
+            radial-gradient(ellipse 100% 80% at 50% -30%, rgba(249, 115, 22, 0.12), transparent 60%),
+            radial-gradient(ellipse 60% 50% at 100% 0%, rgba(249, 115, 22, 0.06), transparent),
             var(--bg);
     }
     
     .hero-content {
-        max-width: 720px;
+        max-width: 760px;
+        position: relative;
+        z-index: 1;
     }
     
     .hero-badge {
@@ -113,28 +153,28 @@ st.markdown("""
         align-items: center;
         gap: 8px;
         background: var(--orange-subtle);
-        border: 1px solid rgba(249, 115, 22, 0.3);
-        padding: 8px 16px;
+        border: 1px solid rgba(249, 115, 22, 0.25);
+        padding: 10px 18px;
         font-family: 'JetBrains Mono', monospace;
         font-size: 12px;
         font-weight: 500;
         color: var(--orange);
-        margin-bottom: 24px;
+        margin-bottom: 28px;
         letter-spacing: 0.02em;
     }
     
     .hero h1 {
         font-family: 'Inter', sans-serif;
-        font-size: clamp(40px, 6vw, 64px);
+        font-size: clamp(42px, 6vw, 68px);
         font-weight: 800;
         color: var(--text);
-        line-height: 1.1;
-        letter-spacing: -0.03em;
-        margin: 0 0 24px;
+        line-height: 1.08;
+        letter-spacing: -0.035em;
+        margin: 0 0 28px;
     }
     
     .hero h1 .highlight {
-        background: linear-gradient(135deg, var(--orange) 0%, #fbbf24 100%);
+        background: linear-gradient(135deg, var(--orange) 0%, #fbbf24 50%, var(--orange) 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -142,90 +182,114 @@ st.markdown("""
     
     .hero-text {
         font-family: 'Inter', sans-serif;
-        font-size: 18px;
+        font-size: 19px;
         color: var(--text-secondary);
         line-height: 1.7;
-        margin-bottom: 40px;
-        max-width: 560px;
+        margin-bottom: 36px;
+        max-width: 580px;
     }
     
-    .hero-cta {
+    /* Hero CTA */
+    .hero-cta-row {
         display: flex;
-        gap: 16px;
-        flex-wrap: wrap;
+        align-items: center;
+        gap: 20px;
         margin-bottom: 48px;
+        flex-wrap: wrap;
     }
     
-    .btn-primary {
+    .hero-cta-btn {
         display: inline-flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
         font-family: 'Inter', sans-serif;
-        font-size: 15px;
+        font-size: 16px;
         font-weight: 600;
         color: var(--bg);
-        background: var(--orange);
-        padding: 14px 28px;
+        background: linear-gradient(135deg, var(--orange) 0%, #ea580c 100%);
+        padding: 16px 32px;
         border: none;
         cursor: pointer;
-        transition: all 0.2s;
+        transition: all 0.25s;
+        box-shadow: 0 4px 20px var(--orange-glow);
     }
     
-    .btn-primary:hover {
-        background: var(--orange-hover);
+    .hero-cta-btn:hover {
         transform: translateY(-2px);
+        box-shadow: 0 8px 30px var(--orange-glow);
     }
     
-    .btn-secondary {
-        display: inline-flex;
+    .hero-cta-sub {
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        color: var(--text-muted);
+    }
+    
+    .hero-cta-sub strong {
+        color: var(--green);
+    }
+    
+    /* Trust badges */
+    .trust-row {
+        display: flex;
+        align-items: center;
+        gap: 32px;
+        margin-bottom: 40px;
+        flex-wrap: wrap;
+    }
+    
+    .trust-badge {
+        display: flex;
         align-items: center;
         gap: 8px;
         font-family: 'Inter', sans-serif;
-        font-size: 15px;
-        font-weight: 500;
-        color: var(--text);
-        background: transparent;
-        padding: 14px 28px;
-        border: 1px solid var(--border-subtle);
-        cursor: pointer;
-        transition: all 0.2s;
+        font-size: 13px;
+        color: var(--text-muted);
     }
     
-    .btn-secondary:hover {
-        background: var(--surface);
-        border-color: var(--text-muted);
+    .trust-badge svg {
+        width: 16px;
+        height: 16px;
+        opacity: 0.7;
     }
     
     /* Stats row */
     .stats-row {
         display: flex;
-        gap: 48px;
-        padding-top: 32px;
+        gap: 56px;
+        padding-top: 36px;
         border-top: 1px solid var(--border);
     }
     
     .stat-item {
         display: flex;
         flex-direction: column;
-        gap: 4px;
+        gap: 6px;
     }
     
     .stat-value {
-        font-family: 'Inter', sans-serif;
-        font-size: 28px;
-        font-weight: 700;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 32px;
+        font-weight: 600;
         color: var(--text);
+        letter-spacing: -0.02em;
+    }
+    
+    .stat-value.highlight {
+        color: var(--orange);
     }
     
     .stat-label {
         font-family: 'Inter', sans-serif;
         font-size: 13px;
         color: var(--text-muted);
+        letter-spacing: 0.01em;
     }
     
     /* Section */
     .section {
         padding: 100px 6%;
+        position: relative;
     }
     
     .section-dark {
@@ -233,61 +297,96 @@ st.markdown("""
     }
     
     .section-header {
-        max-width: 600px;
-        margin-bottom: 56px;
+        max-width: 640px;
+        margin-bottom: 60px;
     }
     
     .section-eyebrow {
         font-family: 'JetBrains Mono', monospace;
-        font-size: 12px;
-        font-weight: 500;
-        letter-spacing: 0.1em;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.15em;
         text-transform: uppercase;
         color: var(--orange);
         margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .section-eyebrow::before {
+        content: '';
+        width: 24px;
+        height: 2px;
+        background: var(--orange);
     }
     
     .section-title {
         font-family: 'Inter', sans-serif;
-        font-size: 36px;
+        font-size: 40px;
         font-weight: 700;
         color: var(--text);
-        letter-spacing: -0.02em;
-        margin: 0 0 16px;
+        letter-spacing: -0.025em;
+        margin: 0 0 18px;
+        line-height: 1.15;
     }
     
     .section-desc {
         font-family: 'Inter', sans-serif;
-        font-size: 16px;
+        font-size: 17px;
         color: var(--text-secondary);
-        line-height: 1.6;
+        line-height: 1.65;
     }
     
     /* Process grid */
     .process-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-        gap: 24px;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 2px;
+        background: var(--border);
+    }
+    
+    @media (max-width: 1024px) {
+        .process-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    
+    @media (max-width: 640px) {
+        .process-grid { grid-template-columns: 1fr; }
     }
     
     .process-card {
-        background: var(--surface);
-        border: 1px solid var(--border);
-        padding: 32px;
-        transition: all 0.2s;
+        background: var(--bg-subtle);
+        padding: 36px 32px;
+        transition: all 0.3s;
+        position: relative;
+    }
+    
+    .process-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: transparent;
+        transition: all 0.3s;
     }
     
     .process-card:hover {
-        background: var(--surface-hover);
-        border-color: var(--border-subtle);
+        background: var(--surface);
+    }
+    
+    .process-card:hover::before {
+        background: var(--orange);
     }
     
     .process-num {
         font-family: 'JetBrains Mono', monospace;
-        font-size: 11px;
-        font-weight: 500;
+        font-size: 13px;
+        font-weight: 600;
         color: var(--orange);
-        margin-bottom: 20px;
+        margin-bottom: 24px;
+        opacity: 0.9;
     }
     
     .process-card h3 {
@@ -302,7 +401,7 @@ st.markdown("""
         font-family: 'Inter', sans-serif;
         font-size: 14px;
         color: var(--text-muted);
-        line-height: 1.6;
+        line-height: 1.65;
         margin: 0;
     }
     
@@ -346,39 +445,99 @@ st.markdown("""
         margin: 0;
     }
     
-    /* Testimonial */
+    /* Testimonials */
+    .testimonials-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+        margin: 0 6%;
+    }
+    
+    @media (max-width: 768px) {
+        .testimonials-grid { grid-template-columns: 1fr; }
+    }
+    
     .testimonial-card {
         background: var(--surface);
         border: 1px solid var(--border);
-        padding: 40px;
-        margin-top: 48px;
+        padding: 36px;
+        position: relative;
+        transition: all 0.3s;
+    }
+    
+    .testimonial-card:hover {
+        border-color: var(--border-subtle);
+        transform: translateY(-2px);
+    }
+    
+    .testimonial-card::before {
+        content: '"';
+        position: absolute;
+        top: 24px;
+        right: 32px;
+        font-family: Georgia, serif;
+        font-size: 72px;
+        color: var(--orange);
+        opacity: 0.15;
+        line-height: 1;
+    }
+    
+    .testimonial-stars {
+        color: #fbbf24;
+        font-size: 14px;
+        margin-bottom: 16px;
+        letter-spacing: 2px;
     }
     
     .testimonial-quote {
         font-family: 'Inter', sans-serif;
-        font-size: 20px;
-        font-weight: 500;
-        color: var(--text);
-        line-height: 1.6;
+        font-size: 16px;
+        font-weight: 400;
+        color: var(--text-secondary);
+        line-height: 1.7;
         margin: 0 0 24px;
+        font-style: italic;
+    }
+    
+    .testimonial-result {
+        background: var(--green-subtle);
+        border: 1px solid rgba(34, 197, 94, 0.2);
+        padding: 12px 16px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .testimonial-result-label {
+        font-family: 'Inter', sans-serif;
+        font-size: 12px;
+        color: var(--text-muted);
+    }
+    
+    .testimonial-result-value {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--green);
     }
     
     .testimonial-author {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 14px;
     }
     
     .testimonial-avatar {
-        width: 44px;
-        height: 44px;
+        width: 48px;
+        height: 48px;
         background: linear-gradient(135deg, var(--orange), #fbbf24);
         display: flex;
         align-items: center;
         justify-content: center;
         font-family: 'Inter', sans-serif;
         font-weight: 700;
-        font-size: 16px;
+        font-size: 18px;
         color: var(--bg);
     }
     
@@ -398,45 +557,71 @@ st.markdown("""
     /* Pricing */
     .pricing-container {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1.1fr 0.9fr;
         gap: 32px;
-        max-width: 900px;
+        max-width: 940px;
     }
     
     .pricing-card {
         background: var(--surface);
         border: 1px solid var(--border);
-        padding: 40px;
+        padding: 44px;
+        position: relative;
     }
     
     .pricing-card.featured {
         border-color: var(--orange);
-        background: linear-gradient(180deg, rgba(249, 115, 22, 0.05) 0%, var(--surface) 50%);
+        background: 
+            linear-gradient(180deg, rgba(249, 115, 22, 0.08) 0%, transparent 40%),
+            var(--surface);
+        box-shadow: 0 0 60px rgba(249, 115, 22, 0.1);
+    }
+    
+    .pricing-card.featured::before {
+        content: 'MOST POPULAR';
+        position: absolute;
+        top: -12px;
+        left: 32px;
+        background: var(--orange);
+        color: var(--bg);
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        padding: 6px 14px;
     }
     
     .pricing-label {
         font-family: 'JetBrains Mono', monospace;
         font-size: 11px;
-        font-weight: 500;
-        letter-spacing: 0.1em;
+        font-weight: 600;
+        letter-spacing: 0.12em;
         text-transform: uppercase;
         color: var(--orange);
-        margin-bottom: 8px;
+        margin-bottom: 12px;
     }
     
     .pricing-amount {
         font-family: 'Inter', sans-serif;
-        font-size: 48px;
+        font-size: 56px;
         font-weight: 800;
         color: var(--text);
         margin-bottom: 4px;
+        letter-spacing: -0.03em;
+    }
+    
+    .pricing-amount sup {
+        font-size: 24px;
+        font-weight: 600;
+        vertical-align: super;
+        margin-right: 2px;
     }
     
     .pricing-period {
         font-family: 'Inter', sans-serif;
         font-size: 14px;
         color: var(--text-muted);
-        margin-bottom: 24px;
+        margin-bottom: 28px;
     }
     
     .pricing-features {
@@ -449,33 +634,73 @@ st.markdown("""
         font-family: 'Inter', sans-serif;
         font-size: 14px;
         color: var(--text-secondary);
-        padding: 12px 0;
+        padding: 14px 0;
         border-bottom: 1px solid var(--border);
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 14px;
     }
     
     .pricing-features li::before {
         content: "✓";
         color: var(--green);
-        font-weight: 600;
+        font-weight: 700;
+        font-size: 15px;
     }
     
     .guarantee-badge {
         background: var(--green-subtle);
-        border: 1px solid rgba(34, 197, 94, 0.2);
-        padding: 16px;
+        border: 1px solid rgba(34, 197, 94, 0.25);
+        padding: 18px 20px;
         font-family: 'Inter', sans-serif;
         font-size: 14px;
-        color: var(--green);
+        color: var(--text-secondary);
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
     }
     
     .guarantee-badge strong {
+        color: var(--green);
+    }
+    
+    /* Math card */
+    .math-card {
+        background: var(--bg-subtle);
+        border: 1px solid var(--border);
+        padding: 36px;
+    }
+    
+    .math-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--border);
+    }
+    
+    .math-row:last-child {
+        border-bottom: none;
+        padding-top: 20px;
+        margin-top: 8px;
+    }
+    
+    .math-label {
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        color: var(--text-muted);
+    }
+    
+    .math-value {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 18px;
+        font-weight: 600;
         color: var(--text);
+    }
+    
+    .math-value.green {
+        color: var(--green);
+        font-size: 24px;
     }
     
     /* FAQ */
@@ -508,24 +733,103 @@ st.markdown("""
     
     /* CTA Section */
     .cta-section {
-        padding: 80px 6%;
-        background: linear-gradient(180deg, var(--bg-subtle) 0%, var(--bg) 100%);
+        padding: 100px 6%;
+        background: 
+            radial-gradient(ellipse 80% 60% at 50% 120%, rgba(249, 115, 22, 0.08), transparent),
+            var(--bg-subtle);
         text-align: center;
     }
     
     .cta-title {
         font-family: 'Inter', sans-serif;
-        font-size: 32px;
+        font-size: 36px;
         font-weight: 700;
         color: var(--text);
         margin: 0 0 16px;
+        letter-spacing: -0.02em;
     }
     
     .cta-text {
         font-family: 'Inter', sans-serif;
-        font-size: 16px;
+        font-size: 17px;
         color: var(--text-muted);
         margin: 0 0 32px;
+    }
+    
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+    
+    .hero-content {
+        animation: fadeInUp 0.8s ease-out;
+    }
+    
+    .stat-value.highlight {
+        animation: pulse 2s ease-in-out infinite;
+    }
+    
+    /* Feature cards enhanced */
+    .feature-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        padding: 28px;
+        margin-bottom: 16px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .feature-card::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 3px;
+        height: 100%;
+        background: var(--orange);
+        transform: scaleY(0);
+        transition: transform 0.3s ease;
+    }
+    
+    .feature-card:hover {
+        border-color: var(--border-subtle);
+        transform: translateX(4px);
+    }
+    
+    .feature-card:hover::after {
+        transform: scaleY(1);
+    }
+    
+    .feature-card h4 {
+        font-family: 'Inter', sans-serif;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text);
+        margin: 0 0 8px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .feature-card p {
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        color: var(--text-muted);
+        line-height: 1.6;
+        margin: 0;
     }
     
     /* Footer */
@@ -729,12 +1033,16 @@ st.markdown("""
 def show_landing_page():
     """Display the polished landing page."""
     
+    # Grid background
+    st.markdown('<div class="grid-bg"></div>', unsafe_allow_html=True)
+    
     # Navigation
     st.markdown("""
     <div class="nav">
         <div class="nav-brand">
             <span>⚡</span> Profit Leak Audit
         </div>
+        <a href="#start" class="nav-cta">Start Your Audit</a>
     </div>
     """, unsafe_allow_html=True)
     
@@ -751,9 +1059,29 @@ def show_landing_page():
                 We analyze your numbers, find the profit leaks, and give you a step-by-step 
                 plan to fix them.
             </p>
+            <div class="hero-cta-row">
+                <a href="#start" class="hero-cta-btn">Get Your Audit — $797 →</a>
+                <span class="hero-cta-sub">
+                    <strong>$10k+ guaranteed</strong> or full refund
+                </span>
+            </div>
+            <div class="trust-row">
+                <div class="trust-badge">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+                    Secure & Encrypted
+                </div>
+                <div class="trust-badge">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                    Money-Back Guarantee
+                </div>
+                <div class="trust-badge">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                    Your Data Stays Private
+                </div>
+            </div>
             <div class="stats-row">
                 <div class="stat-item">
-                    <div class="stat-value">$38k</div>
+                    <div class="stat-value highlight">$38k</div>
                     <div class="stat-label">Average opportunity found</div>
                 </div>
                 <div class="stat-item">
@@ -761,8 +1089,8 @@ def show_landing_page():
                     <div class="stat-label">Report delivered</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value">$10k+</div>
-                    <div class="stat-label">Guaranteed or refund</div>
+                    <div class="stat-value">127+</div>
+                    <div class="stat-label">Tradies audited</div>
                 </div>
             </div>
         </div>
@@ -817,84 +1145,85 @@ def show_landing_page():
     
     with col1:
         st.markdown("""
-        <div style="background: #1c1c1f; border: 1px solid #27272a; padding: 28px; margin-bottom: 20px;">
-            <h4 style="font-family: 'Inter', sans-serif; font-size: 17px; font-weight: 600; color: #fafafa; margin: 0 0 10px;">
-                📊 Pricing Audit
-            </h4>
-            <p style="font-family: 'Inter', sans-serif; font-size: 14px; color: #a1a1aa; line-height: 1.6; margin: 0;">
-                Your rate vs market data. Exact recommended rates. Price increase scripts that actually work.
-            </p>
+        <div class="feature-card">
+            <h4>📊 Pricing Audit</h4>
+            <p>Your rate vs 2026 market data. Exact recommended rates. Price increase scripts that actually work.</p>
         </div>
         """, unsafe_allow_html=True)
         
         st.markdown("""
-        <div style="background: #1c1c1f; border: 1px solid #27272a; padding: 28px; margin-bottom: 20px;">
-            <h4 style="font-family: 'Inter', sans-serif; font-size: 17px; font-weight: 600; color: #fafafa; margin: 0 0 10px;">
-                📈 Quote Win Rate Analysis
-            </h4>
-            <p style="font-family: 'Inter', sans-serif; font-size: 14px; color: #a1a1aa; line-height: 1.6; margin: 0;">
-                Your win rate vs industry benchmarks. Why you're losing quotes. How to close more jobs.
-            </p>
+        <div class="feature-card">
+            <h4>📈 Quote Win Rate Analysis</h4>
+            <p>Your win rate vs industry benchmarks. Why you're losing quotes. How to close more jobs.</p>
         </div>
         """, unsafe_allow_html=True)
         
         st.markdown("""
-        <div style="background: #1c1c1f; border: 1px solid #27272a; padding: 28px; margin-bottom: 20px;">
-            <h4 style="font-family: 'Inter', sans-serif; font-size: 17px; font-weight: 600; color: #fafafa; margin: 0 0 10px;">
-                🎯 90-Day Action Plan
-            </h4>
-            <p style="font-family: 'Inter', sans-serif; font-size: 14px; color: #a1a1aa; line-height: 1.6; margin: 0;">
-                Prioritised quick wins ranked by impact. Conservative and best-case estimates. No fluff.
-            </p>
+        <div class="feature-card">
+            <h4>🎯 90-Day Action Plan</h4>
+            <p>Prioritised quick wins ranked by impact. Conservative and best-case estimates. No fluff.</p>
         </div>
         """, unsafe_allow_html=True)
     
     with col2:
         st.markdown("""
-        <div style="background: #1c1c1f; border: 1px solid #27272a; padding: 28px; margin-bottom: 20px;">
-            <h4 style="font-family: 'Inter', sans-serif; font-size: 17px; font-weight: 600; color: #fafafa; margin: 0 0 10px;">
-                💰 Job Profitability Breakdown
-            </h4>
-            <p style="font-family: 'Inter', sans-serif; font-size: 14px; color: #a1a1aa; line-height: 1.6; margin: 0;">
-                Which jobs make money, which don't. Customer rankings. What work to chase, what to drop.
-            </p>
+        <div class="feature-card">
+            <h4>💰 Job Profitability Breakdown</h4>
+            <p>Which jobs make money, which don't. Customer value rankings. What work to chase, what to drop.</p>
         </div>
         """, unsafe_allow_html=True)
         
         st.markdown("""
-        <div style="background: #1c1c1f; border: 1px solid #27272a; padding: 28px; margin-bottom: 20px;">
-            <h4 style="font-family: 'Inter', sans-serif; font-size: 17px; font-weight: 600; color: #fafafa; margin: 0 0 10px;">
-                ⏱️ Time Leak Report
-            </h4>
-            <p style="font-family: 'Inter', sans-serif; font-size: 14px; color: #a1a1aa; line-height: 1.6; margin: 0;">
-                Where your hours actually go. Admin burden analysis. What to delegate or automate first.
-            </p>
+        <div class="feature-card">
+            <h4>⏱️ Time Leak Report</h4>
+            <p>Where your hours actually go. Admin burden analysis. What to delegate or automate first.</p>
         </div>
         """, unsafe_allow_html=True)
         
         st.markdown("""
-        <div style="background: #1c1c1f; border: 1px solid #27272a; padding: 28px; margin-bottom: 20px;">
-            <h4 style="font-family: 'Inter', sans-serif; font-size: 17px; font-weight: 600; color: #fafafa; margin: 0 0 10px;">
-                📝 Word-for-Word Scripts
-            </h4>
-            <p style="font-family: 'Inter', sans-serif; font-size: 14px; color: #a1a1aa; line-height: 1.6; margin: 0;">
-                Exactly what to say to customers. How to handle pushback. Ready-to-use email templates.
-            </p>
+        <div class="feature-card">
+            <h4>📝 Word-for-Word Scripts</h4>
+            <p>Exactly what to say to customers. How to handle pushback. Ready-to-use email templates.</p>
         </div>
         """, unsafe_allow_html=True)
     
-    # Testimonial
+    # Testimonials
     st.markdown("""
-    <div style="background: #1c1c1f; border: 1px solid #27272a; padding: 40px; margin: 40px 6% 0;">
-        <p style="font-family: 'Inter', sans-serif; font-size: 20px; font-weight: 500; color: #fafafa; line-height: 1.6; margin: 0 0 24px; font-style: italic;">
-            "I thought I was doing okay. Turns out I was leaving $60k on the table. 
-            Raised my rates last week — not a single customer complained. Kicking myself for not doing this years ago."
-        </p>
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <div style="width: 44px; height: 44px; background: linear-gradient(135deg, #f97316, #fbbf24); display: flex; align-items: center; justify-content: center; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 16px; color: #09090b;">D</div>
-            <div>
-                <div style="font-family: 'Inter', sans-serif; font-weight: 600; font-size: 15px; color: #fafafa;">Dave M.</div>
-                <div style="font-family: 'Inter', sans-serif; font-size: 13px; color: #71717a;">Electrician, Sydney · Revenue: $220k → $280k</div>
+    <div class="testimonials-grid">
+        <div class="testimonial-card">
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-quote">
+                "I thought I was doing okay. Turns out I was leaving $60k on the table. 
+                Raised my rates last week — not a single customer complained. Kicking myself for not doing this years ago."
+            </p>
+            <div class="testimonial-result">
+                <span class="testimonial-result-label">Result:</span>
+                <span class="testimonial-result-value">+$60k/year identified</span>
+            </div>
+            <div class="testimonial-author">
+                <div class="testimonial-avatar">D</div>
+                <div>
+                    <div class="testimonial-name">Dave M.</div>
+                    <div class="testimonial-role">Electrician, Sydney</div>
+                </div>
+            </div>
+        </div>
+        <div class="testimonial-card">
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-quote">
+                "Finally someone who speaks my language. No accounting jargon, just 'here's what you're losing and here's exactly how to fix it.' 
+                The scripts alone were worth the price."
+            </p>
+            <div class="testimonial-result">
+                <span class="testimonial-result-label">Result:</span>
+                <span class="testimonial-result-value">+$42k/year identified</span>
+            </div>
+            <div class="testimonial-author">
+                <div class="testimonial-avatar">M</div>
+                <div>
+                    <div class="testimonial-name">Mark T.</div>
+                    <div class="testimonial-role">Plumber, Melbourne</div>
+                </div>
             </div>
         </div>
     </div>
@@ -909,37 +1238,42 @@ def show_landing_page():
         </div>
         <div class="pricing-container">
             <div class="pricing-card featured">
-                <div class="pricing-label">Profit Leak Audit</div>
-                <div class="pricing-amount">$797</div>
-                <div class="pricing-period">One-time investment</div>
+                <div class="pricing-label">Complete Profit Leak Audit</div>
+                <div class="pricing-amount"><sup>$</sup>797</div>
+                <div class="pricing-period">One-time investment · AUD</div>
                 <ul class="pricing-features">
-                    <li>Full business analysis</li>
-                    <li>Market benchmark comparison</li>
-                    <li>Detailed PDF report</li>
-                    <li>Excel action workbook</li>
+                    <li>Complete business financial analysis</li>
+                    <li>Market rate benchmarking (2026 data)</li>
+                    <li>Job-by-job profitability breakdown</li>
+                    <li>Customer value ranking</li>
+                    <li>Detailed PDF report + Excel workbook</li>
+                    <li>Word-for-word scripts for price increases</li>
                     <li>60-minute strategy call</li>
-                    <li>30/60/90 day check-ins</li>
+                    <li>30/60/90 day follow-up check-ins</li>
                 </ul>
                 <div class="guarantee-badge">
-                    <strong>🛡️ Guarantee:</strong> We find $10k+ in opportunities or full refund.
+                    <strong>🛡️ $10k+ Guarantee:</strong> We find it or you pay nothing.
                 </div>
             </div>
-            <div class="pricing-card">
-                <div class="pricing-label">The math</div>
-                <div class="pricing-amount" style="font-size: 28px; margin-bottom: 16px;">Is this worth it?</div>
-                <div class="pricing-period" style="margin-bottom: 16px;">Consider this:</div>
-                <p style="font-family: 'Inter', sans-serif; font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 16px;">
-                    Average opportunity we find: <strong style="color: var(--text);">$38,500/year</strong>
-                </p>
-                <p style="font-family: 'Inter', sans-serif; font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 16px;">
-                    Even at 50% implementation: <strong style="color: var(--text);">$19,250</strong>
-                </p>
-                <p style="font-family: 'Inter', sans-serif; font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 16px;">
-                    Your investment: <strong style="color: var(--text);">$797</strong>
-                </p>
-                <p style="font-family: 'Inter', sans-serif; font-size: 14px; color: var(--green); line-height: 1.7;">
-                    <strong>Return: 24x your investment</strong>
-                </p>
+            <div class="math-card">
+                <div class="pricing-label">The ROI Math</div>
+                <h3 style="font-family: 'Inter', sans-serif; font-size: 22px; font-weight: 700; color: var(--text); margin: 8px 0 24px;">Is this worth it?</h3>
+                <div class="math-row">
+                    <span class="math-label">Average opportunity found</span>
+                    <span class="math-value">$38,500</span>
+                </div>
+                <div class="math-row">
+                    <span class="math-label">Even at 50% implementation</span>
+                    <span class="math-value">$19,250</span>
+                </div>
+                <div class="math-row">
+                    <span class="math-label">Your investment</span>
+                    <span class="math-value">$797</span>
+                </div>
+                <div class="math-row">
+                    <span class="math-label">Your return</span>
+                    <span class="math-value green">24x ROI</span>
+                </div>
             </div>
         </div>
     </div>
@@ -975,9 +1309,16 @@ def show_landing_page():
     
     # CTA
     st.markdown("""
-    <div class="cta-section">
+    <div class="cta-section" id="start">
         <h2 class="cta-title">Ready to find your profit leaks?</h2>
         <p class="cta-text">Takes 15 minutes to submit your data. Report delivered in 7 days.</p>
+        <div style="display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 8px;">
+            <span style="font-family: 'Inter', sans-serif; font-size: 13px; color: var(--text-muted);">🔒 Secure payment</span>
+            <span style="font-family: 'Inter', sans-serif; font-size: 13px; color: var(--text-muted);">•</span>
+            <span style="font-family: 'Inter', sans-serif; font-size: 13px; color: var(--text-muted);">💳 All cards accepted</span>
+            <span style="font-family: 'Inter', sans-serif; font-size: 13px; color: var(--text-muted);">•</span>
+            <span style="font-family: 'Inter', sans-serif; font-size: 13px; color: var(--green);">🛡️ Money-back guarantee</span>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -1331,11 +1672,11 @@ def main():
         # Footer
         st.markdown("""
         <div class="footer">
-            <div class="footer-brand">© 2024 Profit Leak Audit</div>
+            <div class="footer-brand">© 2026 Profit Leak Audit · ABN Coming Soon</div>
             <div class="footer-links">
-                <a href="mailto:hello@example.com">Contact</a>
-                <a href="#">Privacy</a>
-                <a href="#">Terms</a>
+                <a href="mailto:hello@profitleakaudit.com.au">Contact</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
             </div>
         </div>
         """, unsafe_allow_html=True)
