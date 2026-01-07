@@ -13,73 +13,18 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 import streamlit as st
-
-st.set_page_config(
-    page_title="Audit Admin Dashboard",
-    page_icon="⚙️",
-    layout="wide"
-)
-
 from dotenv import load_dotenv
+
 load_dotenv()
 
-st.markdown("""
-<style>
-    .admin-header {
-        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-        color: white;
-        padding: 2rem;
-        border-radius: 12px;
-        margin-bottom: 2rem;
-    }
-    
-    .stat-box {
-        background: white;
-        border-radius: 8px;
-        padding: 1.5rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        text-align: center;
-    }
-    
-    .stat-box .number {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: #10b981;
-    }
-    
-    .stat-box .label {
-        color: #64748b;
-        font-size: 0.9rem;
-    }
-    
-    .customer-card {
-        background: white;
-        border-radius: 8px;
-        padding: 1.5rem;
-        margin-bottom: 1rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        border-left: 4px solid #10b981;
-    }
-    
-    .status-pending {
-        background: #fef3c7;
-        color: #92400e;
-        padding: 0.25rem 0.75rem;
-        border-radius: 100px;
-        font-size: 0.8rem;
-        font-weight: 600;
-    }
-    
-    .status-complete {
-        background: #d1fae5;
-        color: #065f46;
-        padding: 0.25rem 0.75rem;
-        border-radius: 100px;
-        font-size: 0.8rem;
-        font-weight: 600;
-    }
-</style>
-""", unsafe_allow_html=True)
+def load_css(file_path):
+    """Load a CSS file and return its content."""
+    with open(file_path) as f:
+        return f.read()
+
+css_file = Path(__file__).parent.parent / "styles" / "main.css"
+st.markdown(f'<style>{load_css(css_file)}</style>', unsafe_allow_html=True)
+
 
 
 def get_all_submissions():
@@ -206,9 +151,9 @@ def run_audit_for_submission(folder_path: str, trade: str = "electrician",
     }
 
 
-def main():
+def admin_dashboard_page():
     st.markdown("""
-    <div class="admin-header">
+    <div class="section">
         <h1>⚙️ Audit Admin Dashboard</h1>
         <p>Manage customer audits and track your business</p>
     </div>
@@ -250,32 +195,26 @@ def main():
         else:
             for sub in pending_submissions:
                 with st.container():
-                    col1, col2, col3 = st.columns([3, 1, 1])
+                    st.subheader(sub['data'].get('business_info', {}).get('business_name', sub['folder_name']))
                     
-                    with col1:
-                        business_name = sub['data'].get('business_info', {}).get('business_name', sub['folder_name'])
-                        st.subheader(business_name)
-                        
-                        info = sub['data'].get('business_info', {})
-                        st.caption(f"📍 {info.get('location', 'Unknown')} | 🔧 {info.get('trade_type', 'Unknown')} | 📁 {sub['file_count']} files")
-                        
-                        if sub['data'].get('goals', {}).get('biggest_question'):
-                            st.write(f"**Main question:** {sub['data']['goals']['biggest_question']}")
+                    info = sub['data'].get('business_info', {})
+                    st.caption(f"📍 {info.get('location', 'Unknown')} | 🔧 {info.get('trade_type', 'Unknown')} | 📁 {sub['file_count']} files")
                     
-                    with col2:
-                        rate = sub['data'].get('numbers', {}).get('hourly_rate', 95) or 95
-                        st.metric("Hourly Rate", f"${rate}")
+                    if sub['data'].get('goals', {}).get('biggest_question'):
+                        st.write(f"**Main question:** {sub['data']['goals']['biggest_question']}")
                     
-                    with col3:
-                        if st.button("▶️ Run Audit", key=f"run_{sub['folder_name']}"):
-                            with st.spinner("Running audit..."):
-                                try:
-                                    result = run_audit_for_submission(sub['folder'])
-                                    opp = result['analysis'].guarantee_check.get('total_opportunity', 0)
-                                    st.success(f"✓ Audit complete! Found ${opp:,.0f} in opportunities")
-                                    st.rerun()
-                                except Exception as e:
-                                    st.error(f"Error: {e}")
+                    rate = sub['data'].get('numbers', {}).get('hourly_rate', 95) or 95
+                    st.metric("Hourly Rate", f"${rate}")
+                    
+                    if st.button("▶️ Run Audit", key=f"run_{sub['folder_name']}"):
+                        with st.spinner("Running audit..."):
+                            try:
+                                result = run_audit_for_submission(sub['folder'])
+                                opp = result['analysis'].guarantee_check.get('total_opportunity', 0)
+                                st.success(f"✓ Audit complete! Found ${opp:,.0f} in opportunities")
+                                st.rerun()
+                            except Exception as e:
+                                st.error(f"Error: {e}")
                     
                     st.divider()
     
@@ -287,16 +226,14 @@ def main():
         else:
             for output in outputs:
                 with st.container():
-                    col1, col2, col3, col4 = st.columns([3, 1, 1, 1])
+                    st.subheader(output['customer_name'])
+                    st.caption(f"Completed: {output['created'].strftime('%Y-%m-%d %H:%M')}")
+                    
+                    st.metric("Opportunity", f"${output['opportunity']:,.0f}")
+                    
+                    col1, col2 = st.columns(2)
                     
                     with col1:
-                        st.subheader(output['customer_name'])
-                        st.caption(f"Completed: {output['created'].strftime('%Y-%m-%d %H:%M')}")
-                    
-                    with col2:
-                        st.metric("Opportunity", f"${output['opportunity']:,.0f}")
-                    
-                    with col3:
                         html_path = Path(output['folder']) / "profit_leak_audit_report.html"
                         if html_path.exists():
                             with open(html_path, 'r') as f:
@@ -308,7 +245,7 @@ def main():
                                     key=f"dl_html_{output['folder_name']}"
                                 )
                     
-                    with col4:
+                    with col2:
                         excel_path = Path(output['folder']) / "profit_leak_audit_workbook.xlsx"
                         if excel_path.exists():
                             with open(excel_path, 'rb') as f:
@@ -325,74 +262,76 @@ def main():
         st.header("Run Manual Audit")
         st.write("Upload files directly and run an audit without using the customer portal.")
         
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            customer_name = st.text_input("Customer Name", placeholder="Dave's Electrical")
-            trade = st.selectbox("Trade", ["electrician", "plumber", "carpenter", "hvac", "builder", "other"])
-            location = st.text_input("Location", value="Sydney")
-        
-        with col2:
-            rate = st.number_input("Hourly Rate ($)", min_value=50, max_value=300, value=95)
-            hours = st.number_input("Hours/Week", min_value=20, max_value=80, value=50)
-        
-        files = st.file_uploader(
-            "Upload documents (invoices, expenses, quotes)",
-            type=['pdf', 'xlsx', 'xls', 'csv'],
-            accept_multiple_files=True
-        )
-        
-        if st.button("🚀 Run Audit", type="primary") and customer_name and files:
-            from src.utils.file_handler import FileHandler
+        with st.container():
+            col1, col2 = st.columns(2)
             
-            # Save files
-            handler = FileHandler()
-            folder = handler.create_customer_folder(customer_name)
+            with col1:
+                customer_name = st.text_input("Customer Name", placeholder="Dave's Electrical")
+                trade = st.selectbox("Trade", ["electrician", "plumber", "carpenter", "hvac", "builder", "other"])
+                location = st.text_input("Location", value="Sydney")
             
-            for f in files:
-                file_path = folder / "invoices" / f.name
-                file_path.parent.mkdir(exist_ok=True)
-                with open(file_path, 'wb') as out:
-                    out.write(f.read())
+            with col2:
+                rate = st.number_input("Hourly Rate ($)", min_value=50, max_value=300, value=95)
+                hours = st.number_input("Hours/Week", min_value=20, max_value=80, value=50)
             
-            # Run audit
-            with st.status("Running audit...", expanded=True) as status:
-                st.write(f"📁 Files saved to {folder}")
-                st.write("🔬 Analyzing...")
+            files = st.file_uploader(
+                "Upload documents (invoices, expenses, quotes)",
+                type=['pdf', 'xlsx', 'xls', 'csv'],
+                accept_multiple_files=True
+            )
+            
+            if st.button("🚀 Run Audit", type="primary") and customer_name and files:
+                from src.utils.file_handler import FileHandler
                 
-                try:
-                    result = run_audit_for_submission(str(folder), trade, location, rate)
-                    opp = result['analysis'].guarantee_check.get('total_opportunity', 0)
-                    
-                    status.update(label="✅ Audit Complete!", state="complete")
-                    
-                    st.success(f"Found **${opp:,.0f}** in opportunities!")
-                    
-                    col1, col2 = st.columns(2)
-                    with col1:
-                        html_path = result['report']['html_report']
-                        with open(html_path, 'r') as f:
-                            st.download_button(
-                                "📄 Download Report",
-                                f.read(),
-                                file_name="audit_report.html",
-                                mime="text/html"
-                            )
-                    with col2:
-                        excel_path = result['report']['excel_report']
-                        with open(excel_path, 'rb') as f:
-                            st.download_button(
-                                "📊 Download Excel",
-                                f.read(),
-                                file_name="audit_workbook.xlsx"
-                            )
+                # Save files
+                handler = FileHandler()
+                folder = handler.create_customer_folder(customer_name)
                 
-                except Exception as e:
-                    st.error(f"Error: {e}")
-                    import traceback
-                    st.code(traceback.format_exc())
+                for f in files:
+                    file_path = folder / "invoices" / f.name
+                    file_path.parent.mkdir(exist_ok=True)
+                    with open(file_path, 'wb') as out:
+                        out.write(f.read())
+                
+                # Run audit
+                with st.status("Running audit...", expanded=True) as status:
+                    st.write(f"📁 Files saved to {folder}")
+                    st.write("🔬 Analyzing...")
+                    
+                    try:
+                        result = run_audit_for_submission(str(folder), trade, location, rate)
+                        opp = result['analysis'].guarantee_check.get('total_opportunity', 0)
+                        
+                        status.update(label="✅ Audit Complete!", state="complete")
+                        
+                        st.success(f"Found **${opp:,.0f}** in opportunities!")
+                        
+                        col1, col2 = st.columns(2)
+                        with col1:
+                            html_path = result['report']['html_report']
+                            with open(html_path, 'r') as f:
+                                st.download_button(
+                                    "📄 Download Report",
+                                    f.read(),
+                                    file_name="audit_report.html",
+                                    mime="text/html"
+                                )
+                        with col2:
+                            excel_path = result['report']['excel_report']
+                            with open(excel_path, 'rb') as f:
+                                st.download_button(
+                                    "📊 Download Excel",
+                                    f.read(),
+                                    file_name="audit_workbook.xlsx"
+                                )
+                    
+                    except Exception as e:
+                        st.error(f"Error: {e}")
+                        import traceback
+                        st.code(traceback.format_exc())
+
 
 
 if __name__ == "__main__":
-    main()
+    admin_dashboard_page()
 

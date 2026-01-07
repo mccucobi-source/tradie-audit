@@ -15,148 +15,24 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 import streamlit as st
-
-# Page config must be first Streamlit command
-st.set_page_config(
-    page_title="Tradie Profit Leak Audit",
-    page_icon="🔧",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
-
 from dotenv import load_dotenv
+
 load_dotenv()
 
-# Custom CSS for better styling
-st.markdown("""
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
-    
-    .stApp {
-        font-family: 'DM Sans', sans-serif;
-    }
-    
-    .main-header {
-        background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
-        color: white;
-        padding: 2rem;
-        border-radius: 12px;
-        margin-bottom: 2rem;
-        text-align: center;
-    }
-    
-    .main-header h1 {
-        margin: 0;
-        font-size: 2.5rem;
-        font-weight: 700;
-    }
-    
-    .main-header p {
-        margin: 0.5rem 0 0;
-        opacity: 0.9;
-    }
-    
-    .stat-card {
-        background: white;
-        border-radius: 12px;
-        padding: 1.5rem;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        border-left: 4px solid #38a169;
-        margin-bottom: 1rem;
-    }
-    
-    .stat-card .label {
-        font-size: 0.9rem;
-        color: #718096;
-        margin-bottom: 0.25rem;
-    }
-    
-    .stat-card .value {
-        font-size: 2rem;
-        font-weight: 700;
-        color: #1a365d;
-    }
-    
-    .action-card {
-        background: #f7fafc;
-        border-radius: 8px;
-        padding: 1rem;
-        margin-bottom: 0.75rem;
-        border-left: 3px solid #38a169;
-    }
-    
-    .action-card h4 {
-        margin: 0 0 0.5rem;
-        color: #1a365d;
-    }
-    
-    .action-meta {
-        display: flex;
-        gap: 1rem;
-        flex-wrap: wrap;
-    }
-    
-    .action-meta span {
-        font-size: 0.85rem;
-        padding: 0.2rem 0.6rem;
-        border-radius: 20px;
-        background: #1a365d;
-        color: white;
-    }
-    
-    .action-meta .impact {
-        background: #38a169;
-    }
-    
-    .guarantee-box {
-        background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
-        color: white;
-        padding: 2rem;
-        border-radius: 12px;
-        text-align: center;
-        margin: 2rem 0;
-    }
-    
-    .guarantee-box h2 {
-        margin: 0 0 0.5rem;
-    }
-    
-    .guarantee-box .amount {
-        font-size: 3rem;
-        font-weight: 700;
-    }
-    
-    .upload-zone {
-        border: 2px dashed #cbd5e0;
-        border-radius: 12px;
-        padding: 2rem;
-        text-align: center;
-        background: #f7fafc;
-        margin-bottom: 1rem;
-    }
-    
-    .stButton button {
-        background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
-        color: white;
-        border: none;
-        padding: 0.75rem 2rem;
-        font-size: 1.1rem;
-        font-weight: 600;
-        border-radius: 8px;
-        width: 100%;
-    }
-    
-    .stButton button:hover {
-        background: linear-gradient(135deg, #2f855a 0%, #276749 100%);
-    }
-</style>
-""", unsafe_allow_html=True)
+def load_css(file_path):
+    """Load a CSS file and return its content."""
+    with open(file_path) as f:
+        return f.read()
+
+css_file = Path(__file__).parent.parent / "styles" / "main.css"
+st.markdown(f'<style>{load_css(css_file)}</style>', unsafe_allow_html=True)
+
 
 
 def show_header():
     """Display the main header."""
     st.markdown("""
-    <div class="main-header">
+    <div class="section">
         <h1>🔧 Tradie Profit Leak Audit</h1>
         <p>Find $10k-50k in hidden profit opportunities</p>
     </div>
@@ -324,10 +200,12 @@ def show_results(results):
     # Guarantee box
     opportunity = analysis.guarantee_check.get('total_opportunity', 0)
     st.markdown(f"""
-    <div class="guarantee-box">
+    <div class="section cta-section">
         <h2>💰 Total Opportunity Identified</h2>
-        <div class="amount">${opportunity:,.0f}</div>
-        <p>{"✓ $10k Guarantee Met!" if opportunity >= 10000 else "Review recommended"}</p>
+        <div class="feature-card" style="max-width: 400px; margin: 0 auto;">
+            <h3 style="text-align: center; font-size: 2.5rem; margin-bottom: 0;">${opportunity:,.0f}</h3>
+            <p style="text-align: center; margin-top: 0;">{"✓ $10k Guarantee Met!" if opportunity >= 10000 else "Review recommended"}</p>
+        </div>
     </div>
     """, unsafe_allow_html=True)
     
@@ -432,7 +310,7 @@ def show_results(results):
                 )
 
 
-def main():
+def home_page():
     """Main application."""
     # Check for API key
     if not os.getenv("ANTHROPIC_API_KEY"):
@@ -482,5 +360,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    home_page()
 
