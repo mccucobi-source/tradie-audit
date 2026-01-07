@@ -809,22 +809,28 @@ st.markdown("""
         background: white;
         border: 1px solid var(--border);
         border-radius: 16px;
-        padding: 24px;
+        padding: 28px;
+        transition: all 0.2s;
+    }
+    
+    .faq-item:hover {
+        border-color: var(--primary);
+        box-shadow: var(--shadow);
     }
     
     .faq-question {
         font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: 15px;
+        font-size: 16px;
         font-weight: 700;
-        color: var(--text);
-        margin: 0 0 8px;
+        color: #0f172a;
+        margin: 0 0 12px;
     }
     
     .faq-answer {
         font-family: 'Plus Jakarta Sans', sans-serif;
         font-size: 14px;
-        color: var(--text-muted);
-        line-height: 1.6;
+        color: #475569;
+        line-height: 1.7;
         margin: 0;
     }
     
@@ -1304,20 +1310,20 @@ def show_landing_page():
         </div>
         <div class="faq-grid">
             <div class="faq-item">
-                <h4 class="faq-question">What if my records are a mess?</h4>
-                <p class="faq-answer">We work with messy data all the time. Bank statements, random invoices — we'll piece it together.</p>
+                <div class="faq-question">What if my records are a mess?</div>
+                <div class="faq-answer">We work with messy data all the time. Bank statements, random invoices — we'll piece it together. Just send what you have.</div>
             </div>
             <div class="faq-item">
-                <h4 class="faq-question">Will I lose customers if I raise prices?</h4>
-                <p class="faq-answer">We give you scripts for how to raise prices without losing good customers. Most tradies are 15-30% under market rate.</p>
+                <div class="faq-question">Will I lose customers if I raise prices?</div>
+                <div class="faq-answer">We give you word-for-word scripts for how to raise prices without losing good customers. Most tradies are 15-30% under market rate — your customers expect it.</div>
             </div>
             <div class="faq-item">
-                <h4 class="faq-question">What if you don't find $10k?</h4>
-                <p class="faq-answer">Full refund. No questions. In practice, we've never had this happen — the average is $38k.</p>
+                <div class="faq-question">What if you don't find $10k?</div>
+                <div class="faq-answer">Full refund. No questions asked. In practice, we've never had this happen — the average opportunity we find is $38k.</div>
             </div>
             <div class="faq-item">
-                <h4 class="faq-question">Can I do this myself?</h4>
-                <p class="faq-answer">Technically yes, if you have 20+ hours and know financial analysis. Most tradies don't. That's why you're here.</p>
+                <div class="faq-question">Can I do this myself?</div>
+                <div class="faq-answer">Technically yes, if you have 20+ hours spare and know financial analysis. Most tradies don't — that's exactly why we built this.</div>
             </div>
         </div>
     </div>
