@@ -1,6 +1,7 @@
 """
-Tradie Profit Audit - Professional Portal
-Clean, premium design that builds trust and justifies $797.
+Tradie Profit Audit - Premium Portal
+Clean, light design inspired by modern SaaS aesthetics.
+Justifies the $797 price point through professional presentation.
 """
 
 import os
@@ -8,7 +9,6 @@ import sys
 from pathlib import Path
 import json
 from datetime import datetime
-from urllib.parse import urlencode
 
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
@@ -16,7 +16,7 @@ sys.path.insert(0, str(project_root))
 import streamlit as st
 
 st.set_page_config(
-    page_title="Profit Leak Audit",
+    page_title="Profit Leak Audit | Find Your Hidden Revenue",
     page_icon="⚡",
     layout="wide",
     initial_sidebar_state="collapsed"
@@ -28,56 +28,49 @@ load_dotenv()
 # Import payment module
 from src.payments import create_checkout_session, verify_payment, is_test_mode
 
-# Premium dark theme - A+ audit software aesthetic
+# Premium light theme - clean SaaS aesthetic
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
     
     :root {
-        --bg: #0a0a0b;
-        --bg-subtle: #111113;
-        --surface: #18181b;
-        --surface-hover: #27272a;
-        --border: #27272a;
-        --border-subtle: #3f3f46;
-        --text: #fafafa;
-        --text-secondary: #a1a1aa;
-        --text-muted: #71717a;
-        --orange: #f97316;
-        --orange-hover: #fb923c;
-        --orange-glow: rgba(249, 115, 22, 0.4);
-        --orange-subtle: rgba(249, 115, 22, 0.08);
-        --green: #22c55e;
-        --green-subtle: rgba(34, 197, 94, 0.1);
+        --bg: #ffffff;
+        --bg-soft: #f8fafc;
+        --bg-muted: #f1f5f9;
+        --surface: #ffffff;
+        --border: #e2e8f0;
+        --border-light: #f1f5f9;
+        --text: #0f172a;
+        --text-secondary: #475569;
+        --text-muted: #94a3b8;
+        --primary: #f97316;
+        --primary-hover: #ea580c;
+        --primary-light: #fff7ed;
+        --primary-glow: rgba(249, 115, 22, 0.15);
+        --green: #10b981;
+        --green-light: #ecfdf5;
         --blue: #3b82f6;
+        --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+        --shadow: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -1px rgba(0,0,0,0.04);
+        --shadow-lg: 0 20px 25px -5px rgba(0,0,0,0.08), 0 10px 10px -5px rgba(0,0,0,0.03);
+        --shadow-xl: 0 25px 50px -12px rgba(0,0,0,0.15);
     }
     
     .stApp {
         background: var(--bg);
     }
     
-    #MainMenu, footer, header {
-        visibility: hidden;
+    #MainMenu, footer, header, [data-testid="stToolbar"], [data-testid="stSidebar"] {
+        display: none !important;
+    }
+    
+    [data-testid="stSidebarNav"] {
+        display: none !important;
     }
     
     .block-container {
         padding: 0 !important;
         max-width: 100% !important;
-    }
-    
-    /* Subtle grid background */
-    .grid-bg {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-image: 
-            linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-        background-size: 60px 60px;
-        pointer-events: none;
-        z-index: 0;
     }
     
     /* Navigation */
@@ -87,361 +80,461 @@ st.markdown("""
         left: 0;
         right: 0;
         z-index: 100;
-        background: rgba(10, 10, 11, 0.85);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border-bottom: 1px solid var(--border);
-        padding: 14px 6%;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border-light);
+        padding: 16px 5%;
         display: flex;
         justify-content: space-between;
         align-items: center;
     }
     
     .nav-brand {
-        font-family: 'Inter', sans-serif;
-        font-weight: 700;
-        font-size: 18px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-weight: 800;
+        font-size: 20px;
         color: var(--text);
         display: flex;
         align-items: center;
         gap: 10px;
     }
     
-    .nav-brand span {
-        color: var(--orange);
-        font-size: 20px;
+    .nav-brand-icon {
+        width: 36px;
+        height: 36px;
+        background: linear-gradient(135deg, var(--primary) 0%, #fb923c 100%);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 18px;
+    }
+    
+    .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 32px;
+    }
+    
+    .nav-link {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text-secondary);
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    
+    .nav-link:hover {
+        color: var(--text);
     }
     
     .nav-cta {
-        font-family: 'Inter', sans-serif;
-        font-size: 13px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 14px;
         font-weight: 600;
-        color: var(--bg);
-        background: var(--orange);
+        color: white;
+        background: var(--text);
         padding: 10px 20px;
+        border-radius: 8px;
         text-decoration: none;
         transition: all 0.2s;
     }
     
     .nav-cta:hover {
-        background: var(--orange-hover);
+        background: #1e293b;
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px var(--orange-glow);
     }
     
     /* Hero */
     .hero {
         min-height: 100vh;
         display: flex;
+        flex-direction: column;
         align-items: center;
-        padding: 140px 6% 100px;
+        justify-content: center;
+        padding: 140px 5% 80px;
         position: relative;
+        text-align: center;
         background: 
-            radial-gradient(ellipse 100% 80% at 50% -30%, rgba(249, 115, 22, 0.12), transparent 60%),
-            radial-gradient(ellipse 60% 50% at 100% 0%, rgba(249, 115, 22, 0.06), transparent),
+            radial-gradient(ellipse 80% 50% at 50% -20%, var(--primary-glow), transparent),
             var(--bg);
+        overflow: hidden;
     }
     
+    /* Floating cards */
+    .floating-card {
+        position: absolute;
+        background: white;
+        border-radius: 16px;
+        box-shadow: var(--shadow-lg);
+        padding: 16px 20px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        animation: float 6s ease-in-out infinite;
+    }
+    
+    .floating-card.left-1 {
+        left: 8%;
+        top: 25%;
+        transform: rotate(-6deg);
+        animation-delay: 0s;
+    }
+    
+    .floating-card.left-2 {
+        left: 5%;
+        top: 55%;
+        transform: rotate(3deg);
+        animation-delay: 1s;
+    }
+    
+    .floating-card.right-1 {
+        right: 8%;
+        top: 20%;
+        transform: rotate(6deg);
+        animation-delay: 0.5s;
+    }
+    
+    .floating-card.right-2 {
+        right: 5%;
+        top: 50%;
+        transform: rotate(-3deg);
+        animation-delay: 1.5s;
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0) rotate(var(--rotate, 0deg)); }
+        50% { transform: translateY(-10px) rotate(var(--rotate, 0deg)); }
+    }
+    
+    .floating-card-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        margin-bottom: 8px;
+    }
+    
+    .floating-card-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 2px;
+    }
+    
+    .floating-card-value {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--green);
+    }
+    
+    .floating-card-sub {
+        font-size: 11px;
+        color: var(--text-muted);
+    }
+    
+    /* Hero content */
     .hero-content {
-        max-width: 760px;
         position: relative;
-        z-index: 1;
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        max-width: 700px;
     }
     
     .hero-badge {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        background: var(--orange-subtle);
-        border: 1px solid rgba(249, 115, 22, 0.25);
-        padding: 10px 18px;
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 12px;
-        font-weight: 500;
-        color: var(--orange);
-        margin-bottom: 28px;
-        letter-spacing: 0.02em;
+        background: var(--primary-light);
+        border: 1px solid rgba(249, 115, 22, 0.2);
+        padding: 8px 16px;
+        border-radius: 100px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--primary);
+        margin-bottom: 24px;
+    }
+    
+    .hero-icon {
+        width: 56px;
+        height: 56px;
+        background: linear-gradient(135deg, var(--primary) 0%, #fb923c 100%);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 24px;
+        box-shadow: 0 8px 24px var(--primary-glow);
+    }
+    
+    .hero-icon-dots {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+    }
+    
+    .hero-icon-dot {
+        width: 10px;
+        height: 10px;
+        background: white;
+        border-radius: 3px;
     }
     
     .hero h1 {
-        font-family: 'Inter', sans-serif;
-        font-size: clamp(42px, 6vw, 68px);
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: clamp(36px, 5vw, 56px);
         font-weight: 800;
         color: var(--text);
-        line-height: 1.08;
-        letter-spacing: -0.035em;
-        margin: 0 0 28px;
+        line-height: 1.15;
+        letter-spacing: -0.03em;
+        margin: 0 0 8px;
+        max-width: 700px;
     }
     
-    .hero h1 .highlight {
-        background: linear-gradient(135deg, var(--orange) 0%, #fbbf24 50%, var(--orange) 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+    .hero h1 span {
+        color: var(--text-muted);
+        font-weight: 600;
     }
     
     .hero-text {
-        font-family: 'Inter', sans-serif;
-        font-size: 19px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 18px;
         color: var(--text-secondary);
         line-height: 1.7;
-        margin-bottom: 36px;
-        max-width: 580px;
+        margin-bottom: 32px;
+        max-width: 520px;
     }
     
-    /* Hero CTA */
-    .hero-cta-row {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        margin-bottom: 48px;
-        flex-wrap: wrap;
-    }
-    
-    .hero-cta-btn {
+    .hero-cta {
         display: inline-flex;
         align-items: center;
-        gap: 10px;
-        font-family: 'Inter', sans-serif;
+        gap: 8px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
         font-size: 16px;
         font-weight: 600;
-        color: var(--bg);
-        background: linear-gradient(135deg, var(--orange) 0%, #ea580c 100%);
+        color: white;
+        background: var(--primary);
         padding: 16px 32px;
-        border: none;
-        cursor: pointer;
+        border-radius: 12px;
+        text-decoration: none;
         transition: all 0.25s;
-        box-shadow: 0 4px 20px var(--orange-glow);
+        box-shadow: 0 4px 14px var(--primary-glow);
     }
     
-    .hero-cta-btn:hover {
+    .hero-cta:hover {
+        background: var(--primary-hover);
         transform: translateY(-2px);
-        box-shadow: 0 8px 30px var(--orange-glow);
+        box-shadow: 0 8px 24px var(--primary-glow);
     }
     
-    .hero-cta-sub {
-        font-family: 'Inter', sans-serif;
-        font-size: 14px;
-        color: var(--text-muted);
-    }
-    
-    .hero-cta-sub strong {
-        color: var(--green);
-    }
-    
-    /* Trust badges */
-    .trust-row {
+    /* Stats strip */
+    .stats-strip {
         display: flex;
-        align-items: center;
-        gap: 32px;
-        margin-bottom: 40px;
-        flex-wrap: wrap;
-    }
-    
-    .trust-badge {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-family: 'Inter', sans-serif;
-        font-size: 13px;
-        color: var(--text-muted);
-    }
-    
-    .trust-badge svg {
-        width: 16px;
-        height: 16px;
-        opacity: 0.7;
-    }
-    
-    /* Stats row */
-    .stats-row {
-        display: flex;
-        gap: 56px;
-        padding-top: 36px;
+        justify-content: center;
+        gap: 48px;
+        margin-top: 64px;
+        padding-top: 32px;
         border-top: 1px solid var(--border);
     }
     
     .stat-item {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
+        text-align: center;
     }
     
     .stat-value {
         font-family: 'JetBrains Mono', monospace;
-        font-size: 32px;
-        font-weight: 600;
+        font-size: 28px;
+        font-weight: 700;
         color: var(--text);
-        letter-spacing: -0.02em;
-    }
-    
-    .stat-value.highlight {
-        color: var(--orange);
     }
     
     .stat-label {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Plus Jakarta Sans', sans-serif;
         font-size: 13px;
         color: var(--text-muted);
-        letter-spacing: 0.01em;
+        margin-top: 4px;
     }
     
     /* Section */
     .section {
-        padding: 100px 6%;
-        position: relative;
+        padding: 100px 5%;
     }
     
-    .section-dark {
-        background: var(--bg-subtle);
+    .section-gray {
+        background: var(--bg-soft);
     }
     
     .section-header {
-        max-width: 640px;
-        margin-bottom: 60px;
+        text-align: center;
+        max-width: 600px;
+        margin: 0 auto 64px;
     }
     
-    .section-eyebrow {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 11px;
-        font-weight: 600;
-        letter-spacing: 0.15em;
-        text-transform: uppercase;
-        color: var(--orange);
-        margin-bottom: 16px;
-        display: flex;
+    .section-badge {
+        display: inline-flex;
         align-items: center;
-        gap: 12px;
-    }
-    
-    .section-eyebrow::before {
-        content: '';
-        width: 24px;
-        height: 2px;
-        background: var(--orange);
+        gap: 6px;
+        background: var(--bg-muted);
+        padding: 6px 14px;
+        border-radius: 100px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 16px;
     }
     
     .section-title {
-        font-family: 'Inter', sans-serif;
-        font-size: 40px;
-        font-weight: 700;
-        color: var(--text);
-        letter-spacing: -0.025em;
-        margin: 0 0 18px;
-        line-height: 1.15;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 36px;
+        font-weight: 800;
+        color: #0f172a !important;
+        letter-spacing: -0.02em;
+        margin: 0 0 16px;
+        line-height: 1.2;
     }
     
     .section-desc {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Plus Jakarta Sans', sans-serif;
         font-size: 17px;
         color: var(--text-secondary);
-        line-height: 1.65;
+        line-height: 1.6;
     }
     
-    /* Process grid */
+    /* Process steps */
     .process-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        gap: 2px;
-        background: var(--border);
+        gap: 24px;
+        max-width: 1100px;
+        margin: 0 auto;
     }
     
-    @media (max-width: 1024px) {
+    @media (max-width: 900px) {
         .process-grid { grid-template-columns: repeat(2, 1fr); }
     }
     
-    @media (max-width: 640px) {
+    @media (max-width: 600px) {
         .process-grid { grid-template-columns: 1fr; }
     }
     
     .process-card {
-        background: var(--bg-subtle);
-        padding: 36px 32px;
-        transition: all 0.3s;
-        position: relative;
-    }
-    
-    .process-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: transparent;
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 28px;
+        text-align: center;
         transition: all 0.3s;
     }
     
     .process-card:hover {
-        background: var(--surface);
-    }
-    
-    .process-card:hover::before {
-        background: var(--orange);
+        border-color: var(--primary);
+        box-shadow: var(--shadow-lg);
+        transform: translateY(-4px);
     }
     
     .process-num {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--orange);
-        margin-bottom: 24px;
-        opacity: 0.9;
-    }
-    
-    .process-card h3 {
-        font-family: 'Inter', sans-serif;
-        font-size: 18px;
-        font-weight: 600;
-        color: var(--text);
-        margin: 0 0 12px;
-    }
-    
-    .process-card p {
-        font-family: 'Inter', sans-serif;
-        font-size: 14px;
-        color: var(--text-muted);
-        line-height: 1.65;
-        margin: 0;
-    }
-    
-    /* Features list */
-    .features-list {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 32px;
-    }
-    
-    .feature-item {
-        display: flex;
-        gap: 16px;
-    }
-    
-    .feature-icon {
         width: 40px;
         height: 40px;
-        background: var(--orange-subtle);
-        border: 1px solid rgba(249, 115, 22, 0.2);
+        background: var(--bg-muted);
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 18px;
-        flex-shrink: 0;
-    }
-    
-    .feature-content h4 {
-        font-family: 'Inter', sans-serif;
-        font-size: 16px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 14px;
         font-weight: 600;
-        color: var(--text);
-        margin: 0 0 6px;
+        color: var(--text-secondary);
+        margin: 0 auto 16px;
     }
     
-    .feature-content p {
-        font-family: 'Inter', sans-serif;
+    .process-card:hover .process-num {
+        background: var(--primary);
+        color: white;
+    }
+    
+    .process-card h3 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 17px;
+        font-weight: 700;
+        color: var(--text);
+        margin: 0 0 8px;
+    }
+    
+    .process-card p {
+        font-family: 'Plus Jakarta Sans', sans-serif;
         font-size: 14px;
         color: var(--text-muted);
-        line-height: 1.5;
+        line-height: 1.6;
+        margin: 0;
+    }
+    
+    /* Features grid */
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+    
+    @media (max-width: 800px) {
+        .features-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    
+    @media (max-width: 500px) {
+        .features-grid { grid-template-columns: 1fr; }
+    }
+    
+    .feature-card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+        transition: all 0.3s;
+    }
+    
+    .feature-card:hover {
+        border-color: transparent;
+        box-shadow: var(--shadow-lg);
+    }
+    
+    .feature-icon {
+        width: 44px;
+        height: 44px;
+        background: var(--primary-light);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        margin-bottom: 16px;
+    }
+    
+    .feature-card h4 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text);
+        margin: 0 0 8px;
+    }
+    
+    .feature-card p {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 14px;
+        color: var(--text-muted);
+        line-height: 1.6;
         margin: 0;
     }
     
@@ -450,74 +543,50 @@ st.markdown("""
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 24px;
-        margin: 0 6%;
+        max-width: 900px;
+        margin: 0 auto;
     }
     
-    @media (max-width: 768px) {
+    @media (max-width: 700px) {
         .testimonials-grid { grid-template-columns: 1fr; }
     }
     
     .testimonial-card {
-        background: var(--surface);
+        background: white;
         border: 1px solid var(--border);
-        padding: 36px;
+        border-radius: 20px;
+        padding: 32px;
         position: relative;
-        transition: all 0.3s;
-    }
-    
-    .testimonial-card:hover {
-        border-color: var(--border-subtle);
-        transform: translateY(-2px);
-    }
-    
-    .testimonial-card::before {
-        content: '"';
-        position: absolute;
-        top: 24px;
-        right: 32px;
-        font-family: Georgia, serif;
-        font-size: 72px;
-        color: var(--orange);
-        opacity: 0.15;
-        line-height: 1;
     }
     
     .testimonial-stars {
         color: #fbbf24;
-        font-size: 14px;
-        margin-bottom: 16px;
+        font-size: 16px;
         letter-spacing: 2px;
+        margin-bottom: 16px;
     }
     
     .testimonial-quote {
-        font-family: 'Inter', sans-serif;
-        font-size: 16px;
-        font-weight: 400;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 15px;
         color: var(--text-secondary);
         line-height: 1.7;
-        margin: 0 0 24px;
-        font-style: italic;
+        margin: 0 0 20px;
     }
     
     .testimonial-result {
-        background: var(--green-subtle);
-        border: 1px solid rgba(34, 197, 94, 0.2);
+        background: var(--green-light);
+        border-radius: 8px;
         padding: 12px 16px;
         margin-bottom: 20px;
         display: flex;
         align-items: center;
-        gap: 10px;
-    }
-    
-    .testimonial-result-label {
-        font-family: 'Inter', sans-serif;
-        font-size: 12px;
-        color: var(--text-muted);
+        gap: 8px;
     }
     
     .testimonial-result-value {
         font-family: 'JetBrains Mono', monospace;
-        font-size: 14px;
+        font-size: 15px;
         font-weight: 600;
         color: var(--green);
     }
@@ -525,31 +594,32 @@ st.markdown("""
     .testimonial-author {
         display: flex;
         align-items: center;
-        gap: 14px;
+        gap: 12px;
     }
     
     .testimonial-avatar {
-        width: 48px;
-        height: 48px;
-        background: linear-gradient(135deg, var(--orange), #fbbf24);
+        width: 44px;
+        height: 44px;
+        background: linear-gradient(135deg, var(--primary), #fbbf24);
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-family: 'Inter', sans-serif;
+        font-family: 'Plus Jakarta Sans', sans-serif;
         font-weight: 700;
-        font-size: 18px;
-        color: var(--bg);
+        font-size: 16px;
+        color: white;
     }
     
     .testimonial-name {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Plus Jakarta Sans', sans-serif;
         font-weight: 600;
-        font-size: 15px;
+        font-size: 14px;
         color: var(--text);
     }
     
     .testimonial-role {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Plus Jakarta Sans', sans-serif;
         font-size: 13px;
         color: var(--text-muted);
     }
@@ -558,55 +628,59 @@ st.markdown("""
     .pricing-container {
         display: grid;
         grid-template-columns: 1.1fr 0.9fr;
-        gap: 32px;
-        max-width: 940px;
+        gap: 24px;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    
+    @media (max-width: 700px) {
+        .pricing-container { grid-template-columns: 1fr; }
     }
     
     .pricing-card {
-        background: var(--surface);
-        border: 1px solid var(--border);
-        padding: 44px;
+        background: white;
+        border: 2px solid var(--border);
+        border-radius: 24px;
+        padding: 40px;
         position: relative;
     }
     
     .pricing-card.featured {
-        border-color: var(--orange);
-        background: 
-            linear-gradient(180deg, rgba(249, 115, 22, 0.08) 0%, transparent 40%),
-            var(--surface);
-        box-shadow: 0 0 60px rgba(249, 115, 22, 0.1);
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px var(--primary-light);
     }
     
-    .pricing-card.featured::before {
-        content: 'MOST POPULAR';
+    .pricing-badge {
         position: absolute;
-        top: -12px;
-        left: 32px;
-        background: var(--orange);
-        color: var(--bg);
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 10px;
-        font-weight: 600;
-        letter-spacing: 0.1em;
-        padding: 6px 14px;
+        top: -14px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--primary);
+        color: white;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        padding: 6px 16px;
+        border-radius: 100px;
+        text-transform: uppercase;
     }
     
     .pricing-label {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 11px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 13px;
         font-weight: 600;
-        letter-spacing: 0.12em;
+        color: var(--primary);
         text-transform: uppercase;
-        color: var(--orange);
-        margin-bottom: 12px;
+        letter-spacing: 0.05em;
+        margin-bottom: 8px;
     }
     
     .pricing-amount {
-        font-family: 'Inter', sans-serif;
-        font-size: 56px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 52px;
         font-weight: 800;
         color: var(--text);
-        margin-bottom: 4px;
         letter-spacing: -0.03em;
     }
     
@@ -614,61 +688,75 @@ st.markdown("""
         font-size: 24px;
         font-weight: 600;
         vertical-align: super;
-        margin-right: 2px;
     }
     
     .pricing-period {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Plus Jakarta Sans', sans-serif;
         font-size: 14px;
         color: var(--text-muted);
-        margin-bottom: 28px;
+        margin-bottom: 24px;
     }
     
     .pricing-features {
         list-style: none;
         padding: 0;
-        margin: 0 0 32px;
+        margin: 0 0 28px;
     }
     
     .pricing-features li {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Plus Jakarta Sans', sans-serif;
         font-size: 14px;
         color: var(--text-secondary);
-        padding: 14px 0;
-        border-bottom: 1px solid var(--border);
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border-light);
         display: flex;
         align-items: center;
-        gap: 14px;
+        gap: 12px;
     }
     
     .pricing-features li::before {
         content: "✓";
         color: var(--green);
         font-weight: 700;
-        font-size: 15px;
     }
     
-    .guarantee-badge {
-        background: var(--green-subtle);
-        border: 1px solid rgba(34, 197, 94, 0.25);
-        padding: 18px 20px;
-        font-family: 'Inter', sans-serif;
-        font-size: 14px;
-        color: var(--text-secondary);
+    .guarantee-box {
+        background: var(--green-light);
+        border-radius: 12px;
+        padding: 16px 20px;
         display: flex;
         align-items: center;
         gap: 12px;
     }
     
-    .guarantee-badge strong {
+    .guarantee-box-icon {
+        font-size: 24px;
+    }
+    
+    .guarantee-box-text {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 14px;
+        color: var(--text);
+    }
+    
+    .guarantee-box-text strong {
         color: var(--green);
     }
     
     /* Math card */
     .math-card {
-        background: var(--bg-subtle);
+        background: var(--bg-soft);
         border: 1px solid var(--border);
+        border-radius: 24px;
         padding: 36px;
+    }
+    
+    .math-card h3 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--text);
+        margin: 0 0 24px;
     }
     
     .math-row {
@@ -683,10 +771,11 @@ st.markdown("""
         border-bottom: none;
         padding-top: 20px;
         margin-top: 8px;
+        border-top: 2px solid var(--border);
     }
     
     .math-label {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Plus Jakarta Sans', sans-serif;
         font-size: 14px;
         color: var(--text-muted);
     }
@@ -698,33 +787,41 @@ st.markdown("""
         color: var(--text);
     }
     
-    .math-value.green {
+    .math-value.highlight {
         color: var(--green);
-        font-size: 24px;
+        font-size: 22px;
     }
     
     /* FAQ */
     .faq-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-        gap: 24px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    
+    @media (max-width: 700px) {
+        .faq-grid { grid-template-columns: 1fr; }
     }
     
     .faq-item {
-        padding: 24px 0;
-        border-bottom: 1px solid var(--border);
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
     }
     
     .faq-question {
-        font-family: 'Inter', sans-serif;
-        font-size: 16px;
-        font-weight: 600;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 15px;
+        font-weight: 700;
         color: var(--text);
-        margin: 0 0 12px;
+        margin: 0 0 8px;
     }
     
     .faq-answer {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Plus Jakarta Sans', sans-serif;
         font-size: 14px;
         color: var(--text-muted);
         line-height: 1.6;
@@ -733,108 +830,47 @@ st.markdown("""
     
     /* CTA Section */
     .cta-section {
-        padding: 100px 6%;
-        background: 
-            radial-gradient(ellipse 80% 60% at 50% 120%, rgba(249, 115, 22, 0.08), transparent),
-            var(--bg-subtle);
+        padding: 100px 5%;
+        background: linear-gradient(180deg, var(--bg-soft) 0%, white 100%);
         text-align: center;
     }
     
     .cta-title {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Plus Jakarta Sans', sans-serif;
         font-size: 36px;
-        font-weight: 700;
+        font-weight: 800;
         color: var(--text);
         margin: 0 0 16px;
         letter-spacing: -0.02em;
     }
     
     .cta-text {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Plus Jakarta Sans', sans-serif;
         font-size: 17px;
         color: var(--text-muted);
         margin: 0 0 32px;
     }
     
-    /* Animations */
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.7; }
-    }
-    
-    .hero-content {
-        animation: fadeInUp 0.8s ease-out;
-    }
-    
-    .stat-value.highlight {
-        animation: pulse 2s ease-in-out infinite;
-    }
-    
-    /* Feature cards enhanced */
-    .feature-card {
-        background: var(--surface);
-        border: 1px solid var(--border);
-        padding: 28px;
-        margin-bottom: 16px;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .feature-card::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 3px;
-        height: 100%;
-        background: var(--orange);
-        transform: scaleY(0);
-        transition: transform 0.3s ease;
-    }
-    
-    .feature-card:hover {
-        border-color: var(--border-subtle);
-        transform: translateX(4px);
-    }
-    
-    .feature-card:hover::after {
-        transform: scaleY(1);
-    }
-    
-    .feature-card h4 {
-        font-family: 'Inter', sans-serif;
-        font-size: 16px;
-        font-weight: 600;
-        color: var(--text);
-        margin: 0 0 8px;
+    .cta-trust {
         display: flex;
         align-items: center;
-        gap: 10px;
+        justify-content: center;
+        gap: 24px;
+        margin-top: 24px;
     }
     
-    .feature-card p {
-        font-family: 'Inter', sans-serif;
-        font-size: 14px;
+    .cta-trust-item {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 13px;
         color: var(--text-muted);
-        line-height: 1.6;
-        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 6px;
     }
     
     /* Footer */
     .footer {
-        padding: 40px 6%;
+        padding: 40px 5%;
         border-top: 1px solid var(--border);
         display: flex;
         justify-content: space-between;
@@ -842,7 +878,7 @@ st.markdown("""
     }
     
     .footer-brand {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Plus Jakarta Sans', sans-serif;
         font-size: 14px;
         color: var(--text-muted);
     }
@@ -853,10 +889,11 @@ st.markdown("""
     }
     
     .footer-links a {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Plus Jakarta Sans', sans-serif;
         font-size: 13px;
         color: var(--text-muted);
         text-decoration: none;
+        transition: color 0.2s;
     }
     
     .footer-links a:hover {
@@ -867,7 +904,7 @@ st.markdown("""
     .form-container {
         max-width: 640px;
         margin: 0 auto;
-        padding: 80px 24px;
+        padding: 100px 24px;
     }
     
     .form-header {
@@ -875,213 +912,202 @@ st.markdown("""
         margin-bottom: 48px;
     }
     
-    .form-step {
-        background: var(--surface);
+    .form-card {
+        background: white;
         border: 1px solid var(--border);
+        border-radius: 20px;
         padding: 32px;
-        margin-bottom: 24px;
+        margin-bottom: 20px;
     }
     
-    .form-step-title {
+    .form-card-header {
         display: flex;
         align-items: center;
         gap: 12px;
         margin-bottom: 24px;
         padding-bottom: 16px;
-        border-bottom: 1px solid var(--border);
+        border-bottom: 1px solid var(--border-light);
     }
     
-    .form-step-num {
+    .form-card-num {
+        width: 32px;
+        height: 32px;
+        background: var(--primary);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         font-family: 'JetBrains Mono', monospace;
-        font-size: 11px;
-        font-weight: 500;
-        color: var(--orange);
-        background: var(--orange-subtle);
-        padding: 6px 12px;
+        font-size: 13px;
+        font-weight: 600;
+        color: white;
     }
     
-    .form-step-title h3 {
-        font-family: 'Inter', sans-serif;
-        font-size: 18px;
-        font-weight: 600;
+    .form-card-title {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 17px;
+        font-weight: 700;
         color: var(--text);
-        margin: 0;
     }
     
     /* Streamlit overrides */
     .stTextInput > div > div > input,
     .stNumberInput > div > div > input,
     .stSelectbox > div > div {
-        background: var(--bg-subtle) !important;
+        background: var(--bg-soft) !important;
         border: 1px solid var(--border) !important;
-        border-radius: 0 !important;
+        border-radius: 10px !important;
         color: var(--text) !important;
-        font-family: 'Inter', sans-serif !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        padding: 12px 16px !important;
     }
     
     .stTextInput > div > div > input:focus,
     .stNumberInput > div > div > input:focus {
-        border-color: var(--orange) !important;
-        box-shadow: 0 0 0 1px var(--orange) !important;
+        border-color: var(--primary) !important;
+        box-shadow: 0 0 0 3px var(--primary-light) !important;
     }
     
     .stTextInput > label,
     .stNumberInput > label,
     .stSelectbox > label,
     .stSlider > label,
-    .stFileUploader > label,
-    .stTextArea > label,
-    .stMultiSelect > label {
-        font-family: 'Inter', sans-serif !important;
+    .stFileUploader > label {
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
         font-size: 13px !important;
-        font-weight: 500 !important;
+        font-weight: 600 !important;
         color: var(--text-secondary) !important;
     }
     
     .stButton > button {
-        background: var(--orange) !important;
-        color: var(--bg) !important;
-        font-family: 'Inter', sans-serif !important;
+        background: var(--primary) !important;
+        color: white !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
         font-size: 15px !important;
         font-weight: 600 !important;
         border: none !important;
-        border-radius: 0 !important;
+        border-radius: 12px !important;
         padding: 14px 28px !important;
         transition: all 0.2s !important;
     }
     
     .stButton > button:hover {
-        background: var(--orange-hover) !important;
+        background: var(--primary-hover) !important;
         transform: translateY(-2px);
+        box-shadow: 0 4px 14px var(--primary-glow) !important;
     }
     
     .stFileUploader > div {
-        background: var(--bg-subtle) !important;
+        background: var(--bg-soft) !important;
         border: 2px dashed var(--border) !important;
-        border-radius: 0 !important;
-    }
-    
-    .stSlider > div > div > div {
-        background: var(--orange) !important;
-    }
-    
-    .stProgress > div > div {
-        background: var(--orange) !important;
+        border-radius: 12px !important;
     }
     
     .stSuccess {
-        background: var(--green-subtle) !important;
-        border: 1px solid rgba(34, 197, 94, 0.3) !important;
-        color: var(--green) !important;
+        background: var(--green-light) !important;
+        border: 1px solid rgba(16, 185, 129, 0.2) !important;
+        border-radius: 10px !important;
     }
     
-    /* Results styling */
+    /* Results */
     .result-card {
-        background: var(--surface);
-        border: 1px solid var(--border);
-        padding: 32px;
-        margin: 16px 0;
-    }
-    
-    .result-amount {
-        font-family: 'Inter', sans-serif;
-        font-size: 48px;
-        font-weight: 800;
-        color: var(--text);
+        background: white;
+        border: 2px solid var(--primary);
+        border-radius: 20px;
+        padding: 40px;
+        text-align: center;
+        box-shadow: 0 0 0 4px var(--primary-light);
     }
     
     .result-label {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Plus Jakarta Sans', sans-serif;
         font-size: 14px;
         color: var(--text-muted);
+        margin-bottom: 8px;
     }
     
-    .action-preview {
-        background: var(--bg-subtle);
-        border-left: 3px solid var(--orange);
-        padding: 16px 20px;
-        margin: 8px 0;
-    }
-    
-    .action-preview-title {
-        font-family: 'Inter', sans-serif;
-        font-size: 15px;
-        font-weight: 500;
-        color: var(--text);
-    }
-    
-    .action-preview-impact {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 14px;
+    .result-amount {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 48px;
+        font-weight: 800;
         color: var(--green);
-        float: right;
     }
     
     /* Responsive */
     @media (max-width: 768px) {
-        .hero { padding: 100px 5% 60px; }
-        .hero h1 { font-size: 36px; }
-        .stats-row { flex-direction: column; gap: 24px; }
+        .hero { padding: 120px 5% 60px; }
+        .hero h1 { font-size: 32px; }
+        .floating-card { display: none; }
+        .stats-strip { flex-direction: column; gap: 24px; }
         .section { padding: 60px 5%; }
-        .pricing-container { grid-template-columns: 1fr; }
-        .faq-grid { grid-template-columns: 1fr; }
+        .nav-links { display: none; }
     }
 </style>
 """, unsafe_allow_html=True)
 
 
 def show_landing_page():
-    """Display the polished landing page."""
-    
-    # Grid background
-    st.markdown('<div class="grid-bg"></div>', unsafe_allow_html=True)
+    """Display the premium landing page."""
     
     # Navigation
     st.markdown("""
     <div class="nav">
         <div class="nav-brand">
-            <span>⚡</span> Profit Leak Audit
+            <div class="nav-brand-icon">⚡</div>
+            Profit Leak Audit
         </div>
-        <a href="#start" class="nav-cta">Start Your Audit</a>
+        <div class="nav-links">
+            <a href="#how-it-works" class="nav-link">How it works</a>
+            <a href="#features" class="nav-link">Features</a>
+            <a href="#pricing" class="nav-link">Pricing</a>
+            <a href="#start" class="nav-cta">Get started</a>
+        </div>
     </div>
     """, unsafe_allow_html=True)
     
-    # Hero Section
+    # Hero Section - all in one block
     st.markdown("""
     <div class="hero">
+        <div class="floating-card left-1">
+            <div class="floating-card-icon" style="background: #fef3c7;">💰</div>
+            <div class="floating-card-title">Pricing Gap Found</div>
+            <div class="floating-card-value">+$18,500</div>
+            <div class="floating-card-sub">per year</div>
+        </div>
+        <div class="floating-card left-2">
+            <div class="floating-card-icon" style="background: #dbeafe;">📊</div>
+            <div class="floating-card-title">Quote Win Rate</div>
+            <div class="floating-card-value">68%</div>
+            <div class="floating-card-sub">vs 45% industry avg</div>
+        </div>
+        <div class="floating-card right-1">
+            <div class="floating-card-icon" style="background: #dcfce7;">⏱️</div>
+            <div class="floating-card-title">Time Recovered</div>
+            <div class="floating-card-value">12 hrs</div>
+            <div class="floating-card-sub">per week</div>
+        </div>
+        <div class="floating-card right-2">
+            <div class="floating-card-icon" style="background: #fce7f3;">🎯</div>
+            <div class="floating-card-title">Action Items</div>
+            <div class="floating-card-value">14</div>
+            <div class="floating-card-sub">quick wins identified</div>
+        </div>
         <div class="hero-content">
-            <div class="hero-badge">
-                For electricians, plumbers & tradies doing $150k-500k/year
-            </div>
-            <h1>Find the <span class="highlight">$20k-50k</span> you're leaving on the table</h1>
-            <p class="hero-text">
-                Most tradies work 50+ hours a week but make less per hour than their employees. 
-                We analyze your numbers, find the profit leaks, and give you a step-by-step 
-                plan to fix them.
-            </p>
-            <div class="hero-cta-row">
-                <a href="#start" class="hero-cta-btn">Get Your Audit — $797 →</a>
-                <span class="hero-cta-sub">
-                    <strong>$10k+ guaranteed</strong> or full refund
-                </span>
-            </div>
-            <div class="trust-row">
-                <div class="trust-badge">
-                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
-                    Secure & Encrypted
-                </div>
-                <div class="trust-badge">
-                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                    Money-Back Guarantee
-                </div>
-                <div class="trust-badge">
-                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
-                    Your Data Stays Private
+            <div class="hero-badge">For tradies doing $150k-$500k/year</div>
+            <div class="hero-icon">
+                <div class="hero-icon-dots">
+                    <div class="hero-icon-dot"></div>
+                    <div class="hero-icon-dot"></div>
+                    <div class="hero-icon-dot"></div>
+                    <div class="hero-icon-dot"></div>
                 </div>
             </div>
-            <div class="stats-row">
+            <h1>Find your profit leaks<br><span>all in one audit</span></h1>
+            <p class="hero-text">Most tradies leave $20k-50k on the table every year. We analyze your numbers, find the leaks, and give you a step-by-step plan to fix them.</p>
+            <a href="#start" class="hero-cta">Get your free audit →</a>
+            <div class="stats-strip">
                 <div class="stat-item">
-                    <div class="stat-value highlight">$38k</div>
+                    <div class="stat-value">$38k</div>
                     <div class="stat-label">Average opportunity found</div>
                 </div>
                 <div class="stat-item">
@@ -1099,130 +1125,119 @@ def show_landing_page():
     
     # How it works
     st.markdown("""
-    <div class="section section-dark">
+    <div class="section section-gray" id="how-it-works">
         <div class="section-header">
-            <div class="section-eyebrow">How it works</div>
-            <h2 class="section-title">Four steps to more profit</h2>
+            <div class="section-badge">How it works</div>
+            <h2 class="section-title">Four simple steps to more profit</h2>
             <p class="section-desc">No complicated software. No long-term contracts. Just clear answers about your business.</p>
         </div>
         <div class="process-grid">
             <div class="process-card">
-                <div class="process-num">01</div>
-                <h3>Send your data</h3>
-                <p>Upload 12 months of invoices, expenses, and quotes. Takes 15 minutes. We handle messy spreadsheets.</p>
+                <div class="process-num">1</div>
+                <h3>Upload your data</h3>
+                <p>Send us 12 months of invoices, expenses, and quotes. Takes 15 minutes.</p>
             </div>
             <div class="process-card">
-                <div class="process-num">02</div>
+                <div class="process-num">2</div>
                 <h3>We analyze everything</h3>
-                <p>Every job, every customer, every expense. Benchmarked against hundreds of similar tradies in your area.</p>
+                <p>Every job, customer, and expense. Benchmarked against similar tradies.</p>
             </div>
             <div class="process-card">
-                <div class="process-num">03</div>
+                <div class="process-num">3</div>
                 <h3>Get your action plan</h3>
-                <p>Clear report with exact numbers, scripts for what to say to customers, and realistic timelines.</p>
+                <p>Clear report with exact numbers and scripts for what to say to customers.</p>
             </div>
             <div class="process-card">
-                <div class="process-num">04</div>
+                <div class="process-num">4</div>
                 <h3>Strategy call</h3>
-                <p>60 minutes to walk through the findings, answer questions, and plan your next moves.</p>
+                <p>60 minutes to walk through findings and plan your next moves.</p>
             </div>
         </div>
     </div>
     """, unsafe_allow_html=True)
     
-    # What you get - Clean card layout
+    # Features
     st.markdown("""
-    <div class="section">
+    <div class="section" id="features">
         <div class="section-header">
-            <div class="section-eyebrow">What's included</div>
+            <div class="section-badge">What's included</div>
             <h2 class="section-title">Everything you need to fix the leaks</h2>
         </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h4>Pricing Audit</h4>
+                <p>Your rate vs 2026 market data. Exact recommended rates with scripts that work.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💰</div>
+                <h4>Job Profitability</h4>
+                <p>Which jobs make money, which don't. Customer rankings by value.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📈</div>
+                <h4>Quote Analysis</h4>
+                <p>Your win rate vs benchmarks. Why you're losing quotes and how to close more.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⏱️</div>
+                <h4>Time Leak Report</h4>
+                <p>Where your hours go. What to delegate or automate first.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h4>90-Day Action Plan</h4>
+                <p>Prioritized quick wins ranked by impact. Conservative estimates.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📝</div>
+                <h4>Word-for-Word Scripts</h4>
+                <p>Exactly what to say to customers. How to handle pushback.</p>
+            </div>
+        </div>
     </div>
     """, unsafe_allow_html=True)
-    
-    # Use Streamlit columns for cleaner rendering
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.markdown("""
-        <div class="feature-card">
-            <h4>📊 Pricing Audit</h4>
-            <p>Your rate vs 2026 market data. Exact recommended rates. Price increase scripts that actually work.</p>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        st.markdown("""
-        <div class="feature-card">
-            <h4>📈 Quote Win Rate Analysis</h4>
-            <p>Your win rate vs industry benchmarks. Why you're losing quotes. How to close more jobs.</p>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        st.markdown("""
-        <div class="feature-card">
-            <h4>🎯 90-Day Action Plan</h4>
-            <p>Prioritised quick wins ranked by impact. Conservative and best-case estimates. No fluff.</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown("""
-        <div class="feature-card">
-            <h4>💰 Job Profitability Breakdown</h4>
-            <p>Which jobs make money, which don't. Customer value rankings. What work to chase, what to drop.</p>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        st.markdown("""
-        <div class="feature-card">
-            <h4>⏱️ Time Leak Report</h4>
-            <p>Where your hours actually go. Admin burden analysis. What to delegate or automate first.</p>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        st.markdown("""
-        <div class="feature-card">
-            <h4>📝 Word-for-Word Scripts</h4>
-            <p>Exactly what to say to customers. How to handle pushback. Ready-to-use email templates.</p>
-        </div>
-        """, unsafe_allow_html=True)
     
     # Testimonials
     st.markdown("""
-    <div class="testimonials-grid">
-        <div class="testimonial-card">
-            <div class="testimonial-stars">★★★★★</div>
-            <p class="testimonial-quote">
-                "I thought I was doing okay. Turns out I was leaving $60k on the table. 
-                Raised my rates last week — not a single customer complained. Kicking myself for not doing this years ago."
-            </p>
-            <div class="testimonial-result">
-                <span class="testimonial-result-label">Result:</span>
-                <span class="testimonial-result-value">+$60k/year identified</span>
-            </div>
-            <div class="testimonial-author">
-                <div class="testimonial-avatar">D</div>
-                <div>
-                    <div class="testimonial-name">Dave M.</div>
-                    <div class="testimonial-role">Electrician, Sydney</div>
+    <div class="section section-gray">
+        <div class="section-header">
+            <div class="section-badge">Results</div>
+            <h2 class="section-title">What tradies are saying</h2>
+        </div>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-quote">
+                    "I thought I was doing okay. Turns out I was leaving $60k on the table. 
+                    Raised my rates last week — not a single customer complained."
+                </p>
+                <div class="testimonial-result">
+                    <span class="testimonial-result-value">+$60k/year identified</span>
+                </div>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">D</div>
+                    <div>
+                        <div class="testimonial-name">Dave M.</div>
+                        <div class="testimonial-role">Electrician, Sydney</div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="testimonial-card">
-            <div class="testimonial-stars">★★★★★</div>
-            <p class="testimonial-quote">
-                "Finally someone who speaks my language. No accounting jargon, just 'here's what you're losing and here's exactly how to fix it.' 
-                The scripts alone were worth the price."
-            </p>
-            <div class="testimonial-result">
-                <span class="testimonial-result-label">Result:</span>
-                <span class="testimonial-result-value">+$42k/year identified</span>
-            </div>
-            <div class="testimonial-author">
-                <div class="testimonial-avatar">M</div>
-                <div>
-                    <div class="testimonial-name">Mark T.</div>
-                    <div class="testimonial-role">Plumber, Melbourne</div>
+            <div class="testimonial-card">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-quote">
+                    "Finally someone who speaks my language. No accounting jargon, just 
+                    'here's what you're losing and here's how to fix it.' Scripts were gold."
+                </p>
+                <div class="testimonial-result">
+                    <span class="testimonial-result-value">+$42k/year identified</span>
+                </div>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">M</div>
+                    <div>
+                        <div class="testimonial-name">Mark T.</div>
+                        <div class="testimonial-role">Plumber, Melbourne</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1231,13 +1246,14 @@ def show_landing_page():
     
     # Pricing
     st.markdown("""
-    <div class="section section-dark">
+    <div class="section" id="pricing">
         <div class="section-header">
-            <div class="section-eyebrow">Investment</div>
+            <div class="section-badge">Investment</div>
             <h2 class="section-title">One audit. Thousands in returns.</h2>
         </div>
         <div class="pricing-container">
             <div class="pricing-card featured">
+                <div class="pricing-badge">Most Popular</div>
                 <div class="pricing-label">Complete Profit Leak Audit</div>
                 <div class="pricing-amount"><sup>$</sup>797</div>
                 <div class="pricing-period">One-time investment · AUD</div>
@@ -1251,13 +1267,13 @@ def show_landing_page():
                     <li>60-minute strategy call</li>
                     <li>30/60/90 day follow-up check-ins</li>
                 </ul>
-                <div class="guarantee-badge">
-                    <strong>🛡️ $10k+ Guarantee:</strong> We find it or you pay nothing.
+                <div class="guarantee-box">
+                    <span class="guarantee-box-icon">🛡️</span>
+                    <span class="guarantee-box-text"><strong>$10k+ Guarantee:</strong> We find it or you pay nothing.</span>
                 </div>
             </div>
             <div class="math-card">
-                <div class="pricing-label">The ROI Math</div>
-                <h3 style="font-family: 'Inter', sans-serif; font-size: 22px; font-weight: 700; color: var(--text); margin: 8px 0 24px;">Is this worth it?</h3>
+                <h3>Is this worth it?</h3>
                 <div class="math-row">
                     <span class="math-label">Average opportunity found</span>
                     <span class="math-value">$38,500</span>
@@ -1272,7 +1288,7 @@ def show_landing_page():
                 </div>
                 <div class="math-row">
                     <span class="math-label">Your return</span>
-                    <span class="math-value green">24x ROI</span>
+                    <span class="math-value highlight">24x ROI</span>
                 </div>
             </div>
         </div>
@@ -1281,27 +1297,27 @@ def show_landing_page():
     
     # FAQ
     st.markdown("""
-    <div class="section">
+    <div class="section section-gray">
         <div class="section-header">
-            <div class="section-eyebrow">Questions</div>
+            <div class="section-badge">FAQ</div>
             <h2 class="section-title">Common questions</h2>
         </div>
         <div class="faq-grid">
             <div class="faq-item">
                 <h4 class="faq-question">What if my records are a mess?</h4>
-                <p class="faq-answer">We work with messy data all the time. Bank statements, random invoices, spreadsheets — we'll piece it together. Might take an extra day or two.</p>
+                <p class="faq-answer">We work with messy data all the time. Bank statements, random invoices — we'll piece it together.</p>
             </div>
             <div class="faq-item">
-                <h4 class="faq-question">Will you tell me to raise prices and lose customers?</h4>
-                <p class="faq-answer">We'll show you the data. Most tradies are 15-30% under market rate. We also give you scripts for how to raise prices without losing good customers.</p>
+                <h4 class="faq-question">Will I lose customers if I raise prices?</h4>
+                <p class="faq-answer">We give you scripts for how to raise prices without losing good customers. Most tradies are 15-30% under market rate.</p>
             </div>
             <div class="faq-item">
-                <h4 class="faq-question">What if you don't find $10k in opportunities?</h4>
+                <h4 class="faq-question">What if you don't find $10k?</h4>
                 <p class="faq-answer">Full refund. No questions. In practice, we've never had this happen — the average is $38k.</p>
             </div>
             <div class="faq-item">
                 <h4 class="faq-question">Can I do this myself?</h4>
-                <p class="faq-answer">Technically yes, if you have 20+ hours and know how to analyze business financials. Most tradies don't have either. That's why you're here.</p>
+                <p class="faq-answer">Technically yes, if you have 20+ hours and know financial analysis. Most tradies don't. That's why you're here.</p>
             </div>
         </div>
     </div>
@@ -1312,13 +1328,6 @@ def show_landing_page():
     <div class="cta-section" id="start">
         <h2 class="cta-title">Ready to find your profit leaks?</h2>
         <p class="cta-text">Takes 15 minutes to submit your data. Report delivered in 7 days.</p>
-        <div style="display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 8px;">
-            <span style="font-family: 'Inter', sans-serif; font-size: 13px; color: var(--text-muted);">🔒 Secure payment</span>
-            <span style="font-family: 'Inter', sans-serif; font-size: 13px; color: var(--text-muted);">•</span>
-            <span style="font-family: 'Inter', sans-serif; font-size: 13px; color: var(--text-muted);">💳 All cards accepted</span>
-            <span style="font-family: 'Inter', sans-serif; font-size: 13px; color: var(--text-muted);">•</span>
-            <span style="font-family: 'Inter', sans-serif; font-size: 13px; color: var(--green);">🛡️ Money-back guarantee</span>
-        </div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -1329,18 +1338,18 @@ def show_intake_form():
     st.markdown("""
     <div class="form-container">
         <div class="form-header">
-            <div class="section-eyebrow">Get Started</div>
+            <div class="section-badge">Get Started</div>
             <h2 class="section-title">Submit your data</h2>
             <p class="section-desc">Fill out the form below. Takes about 15 minutes.</p>
         </div>
     """, unsafe_allow_html=True)
     
-    # Step 1: Business
+    # Step 1
     st.markdown("""
-    <div class="form-step">
-        <div class="form-step-title">
-            <span class="form-step-num">01</span>
-            <h3>Your business</h3>
+    <div class="form-card">
+        <div class="form-card-header">
+            <div class="form-card-num">1</div>
+            <div class="form-card-title">Your business</div>
         </div>
     """, unsafe_allow_html=True)
     
@@ -1354,12 +1363,12 @@ def show_intake_form():
     
     st.markdown("</div>", unsafe_allow_html=True)
     
-    # Step 2: Numbers
+    # Step 2
     st.markdown("""
-    <div class="form-step">
-        <div class="form-step-title">
-            <span class="form-step-num">02</span>
-            <h3>Current numbers</h3>
+    <div class="form-card">
+        <div class="form-card-header">
+            <div class="form-card-num">2</div>
+            <div class="form-card-title">Current numbers</div>
         </div>
     """, unsafe_allow_html=True)
     
@@ -1373,19 +1382,16 @@ def show_intake_form():
     
     st.markdown("</div>", unsafe_allow_html=True)
     
-    # Step 3: Documents
+    # Step 3
     st.markdown("""
-    <div class="form-step">
-        <div class="form-step-title">
-            <span class="form-step-num">03</span>
-            <h3>Upload documents</h3>
+    <div class="form-card">
+        <div class="form-card-header">
+            <div class="form-card-num">3</div>
+            <div class="form-card-title">Upload documents</div>
         </div>
-    """, unsafe_allow_html=True)
-    
-    st.markdown("""
-    <p style="font-family: 'Inter', sans-serif; font-size: 14px; color: var(--text-muted); margin-bottom: 16px;">
-        Upload your invoices, expenses, and quotes from the last 12 months. PDF, Excel, or CSV.
-    </p>
+        <p style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; color: #64748b; margin-bottom: 16px;">
+            Upload your invoices, expenses, and quotes from the last 12 months.
+        </p>
     """, unsafe_allow_html=True)
     
     invoices = st.file_uploader("Invoices", type=['pdf', 'xlsx', 'xls', 'csv'], accept_multiple_files=True, key="inv")
@@ -1393,9 +1399,9 @@ def show_intake_form():
     quotes = st.file_uploader("Quotes (optional)", type=['pdf', 'xlsx', 'xls', 'csv'], accept_multiple_files=True, key="quo")
     
     if invoices:
-        st.success(f"✓ {len(invoices)} invoice files")
+        st.success(f"✓ {len(invoices)} invoice files uploaded")
     if expenses:
-        st.success(f"✓ {len(expenses)} expense files")
+        st.success(f"✓ {len(expenses)} expense files uploaded")
     
     st.markdown("</div></div>", unsafe_allow_html=True)
     
@@ -1422,14 +1428,13 @@ def show_intake_form():
 
 
 def run_audit_pipeline(business_name, email, trade_type, location, hourly_rate, hours_per_week, invoices, expenses, quotes):
-    """Run the audit."""
+    """Run the audit pipeline."""
     from src.utils.file_handler import FileHandler
     from src.agents.data_extractor import DataExtractor
     from src.agents.analyzer import Analyzer, BusinessContext
     from src.agents.report_generator import ReportGenerator
     
     with st.status("Running your audit...", expanded=True) as status:
-        # Save files
         st.write("📁 Saving documents...")
         handler = FileHandler()
         folder = handler.create_customer_folder(business_name)
@@ -1441,7 +1446,6 @@ def run_audit_pipeline(business_name, email, trade_type, location, hourly_rate, 
                 with open(path, 'wb') as out:
                     out.write(f.read())
         
-        # Save form data
         with open(folder / "intake_form.json", 'w') as f:
             json.dump({
                 "business_name": business_name,
@@ -1453,14 +1457,12 @@ def run_audit_pipeline(business_name, email, trade_type, location, hourly_rate, 
                 "submitted_at": datetime.now().isoformat()
             }, f, indent=2)
         
-        # Extract
         st.write("🔍 Extracting data...")
         extractor = DataExtractor()
         results = extractor.extract_from_folder(str(folder))
         combined = extractor.combine_results(results)
         st.write(f"✓ Found {combined['summary']['total_transactions']} transactions")
         
-        # Analyze
         st.write("📊 Analyzing...")
         context = BusinessContext(
             trade_type=trade_type if trade_type != "other" else "electrician",
@@ -1474,38 +1476,26 @@ def run_audit_pipeline(business_name, email, trade_type, location, hourly_rate, 
         analyzer = Analyzer()
         analysis = analyzer.analyze(combined, context)
         
-        # Generate report
         st.write("📄 Generating report...")
         generator = ReportGenerator(output_dir="./output")
         report = generator.generate_report(analysis, context, business_name)
         
-        status.update(label="✅ Audit complete", state="complete")
+        status.update(label="✅ Audit complete!", state="complete")
     
-    # Show results
+    # Results
     opportunity = analysis.guarantee_check.get('total_opportunity', 0)
     conservative = opportunity * 0.7
     
     st.markdown(f"""
-    <div class="result-card" style="text-align: center; border-color: var(--orange);">
+    <div class="result-card">
         <div class="result-label">Conservative Opportunity Identified</div>
-        <div class="result-amount" style="color: var(--green);">${conservative:,.0f}</div>
-        <div class="result-label">Best case: ${opportunity:,.0f}</div>
+        <div class="result-amount">${conservative:,.0f}</div>
+        <div class="result-label" style="margin-top: 8px;">Best case: ${opportunity:,.0f}</div>
     </div>
     """, unsafe_allow_html=True)
     
-    st.markdown("<h3 style='color: var(--text); font-family: Inter, sans-serif; margin: 24px 0 16px;'>Top Actions</h3>", unsafe_allow_html=True)
-    
-    for i, action in enumerate(analysis.action_plan[:3], 1):
-        impact = action.get('impact_conservative', action.get('impact_annual', 0)) * 0.85
-        st.markdown(f"""
-        <div class="action-preview">
-            <span class="action-preview-impact">+${impact:,.0f}/yr</span>
-            <span class="action-preview-title">{i}. {action.get('action', 'N/A')}</span>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # Downloads
     st.markdown("<br>", unsafe_allow_html=True)
+    
     col1, col2 = st.columns(2)
     with col1:
         if Path(report['html_report']).exists():
@@ -1519,30 +1509,15 @@ def run_audit_pipeline(business_name, email, trade_type, location, hourly_rate, 
                 st.download_button("📊 Download Workbook", f.read(),
                                    file_name=f"{business_name.replace(' ', '_')}_workbook.xlsx",
                                    use_container_width=True)
-    
-    st.markdown("""
-    <div style="background: var(--surface); border: 1px solid var(--border); padding: 24px; margin-top: 24px; text-align: center;">
-        <p style="font-family: 'Inter', sans-serif; color: var(--text); margin: 0 0 8px;">
-            We'll email you within 24 hours to book your strategy call.
-        </p>
-        <p style="font-family: 'Inter', sans-serif; font-size: 13px; color: var(--text-muted); margin: 0;">
-            Questions? Reply to your confirmation email.
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
 
 
 def show_payment_success():
     """Show success page after payment."""
     st.markdown("""
-    <div class="form-container" style="text-align: center; padding: 80px 20px;">
+    <div class="form-container" style="text-align: center;">
         <div style="font-size: 64px; margin-bottom: 24px;">✅</div>
-        <h2 style="font-family: 'Inter', sans-serif; color: var(--text); font-size: 32px; margin-bottom: 16px;">
-            Payment Successful!
-        </h2>
-        <p style="font-family: 'Inter', sans-serif; color: var(--text-secondary); font-size: 18px; margin-bottom: 32px;">
-            Thank you for your purchase. You're ready to start your audit.
-        </p>
+        <h2 class="section-title">Payment Successful!</h2>
+        <p class="section-desc">Thank you for your purchase. You're ready to start your audit.</p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -1558,14 +1533,10 @@ def show_payment_success():
 def show_payment_cancelled():
     """Show cancelled page."""
     st.markdown("""
-    <div class="form-container" style="text-align: center; padding: 80px 20px;">
+    <div class="form-container" style="text-align: center;">
         <div style="font-size: 64px; margin-bottom: 24px;">↩️</div>
-        <h2 style="font-family: 'Inter', sans-serif; color: var(--text); font-size: 32px; margin-bottom: 16px;">
-            Payment Cancelled
-        </h2>
-        <p style="font-family: 'Inter', sans-serif; color: var(--text-secondary); font-size: 18px; margin-bottom: 32px;">
-            No worries. Your card hasn't been charged.
-        </p>
+        <h2 class="section-title">Payment Cancelled</h2>
+        <p class="section-desc">No worries. Your card hasn't been charged.</p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -1578,8 +1549,6 @@ def show_payment_cancelled():
 
 def handle_stripe_checkout():
     """Redirect to Stripe checkout."""
-    # Get the base URL (works for both local and deployed)
-    # In production, you'd set this via environment variable
     base_url = os.getenv("APP_BASE_URL", "http://localhost:8501")
     
     success_url = f"{base_url}?payment=success&session_id={{CHECKOUT_SESSION_ID}}"
@@ -1592,9 +1561,7 @@ def handle_stripe_checkout():
     )
     
     if result["success"]:
-        # Store session ID for verification
         st.session_state.checkout_session_id = result["session_id"]
-        # Redirect to Stripe
         st.markdown(f"""
         <meta http-equiv="refresh" content="0;url={result['checkout_url']}">
         <script>window.location.href = "{result['checkout_url']}";</script>
@@ -1605,14 +1572,11 @@ def handle_stripe_checkout():
 
 
 def main():
-    # Check URL parameters for payment status
     params = st.query_params
     
-    # Handle payment callbacks
     if params.get("payment") == "success":
         session_id = params.get("session_id")
         if session_id:
-            # Verify the payment
             verification = verify_payment(session_id)
             if verification.get("paid"):
                 st.session_state.payment_verified = True
@@ -1624,24 +1588,20 @@ def main():
         show_payment_cancelled()
         return
     
-    # Show test mode banner if applicable
     if is_test_mode():
         st.markdown("""
-        <div style="background: #422006; border: 1px solid #f97316; padding: 12px 20px; text-align: center; position: fixed; top: 0; left: 0; right: 0; z-index: 1000;">
-            <span style="font-family: 'Inter', sans-serif; font-size: 13px; color: #fed7aa;">
-                🧪 <strong>Test Mode</strong> — Use card 4242 4242 4242 4242, any future date, any CVC
+        <div style="background: #fef3c7; border-bottom: 1px solid #fcd34d; padding: 10px 20px; text-align: center; position: fixed; top: 0; left: 0; right: 0; z-index: 1000;">
+            <span style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; color: #92400e;">
+                🧪 <strong>Test Mode</strong> — Use card 4242 4242 4242 4242
             </span>
         </div>
-        <div style="height: 48px;"></div>
+        <div style="height: 40px;"></div>
         """, unsafe_allow_html=True)
     
-    # Main flow
     if st.session_state.get('show_form'):
-        # Check if payment is verified (or bypass for testing)
         if st.session_state.get('payment_verified') or os.getenv("BYPASS_PAYMENT") == "true":
             show_intake_form()
         else:
-            # Need to pay first
             st.warning("Please complete payment to access the audit form.")
             if st.button("← Back to Home"):
                 st.session_state.show_form = False
@@ -1651,32 +1611,38 @@ def main():
         
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
-            # Check if Stripe is configured
             if os.getenv("STRIPE_SECRET_KEY"):
                 if st.button("Start Your Audit — $797 →", use_container_width=True):
                     handle_stripe_checkout()
             else:
-                # No Stripe key - show setup message or bypass
                 st.markdown("""
-                <div style="background: var(--surface); border: 1px solid var(--border); padding: 16px; margin-bottom: 16px; text-align: center;">
-                    <p style="font-family: 'Inter', sans-serif; font-size: 14px; color: var(--text-muted); margin: 0;">
-                        ⚠️ Stripe not configured. Add STRIPE_SECRET_KEY to .env
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 16px; text-align: center;">
+                    <p style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; color: #64748b; margin: 0;">
+                        ⚠️ Stripe not configured. Running in demo mode.
                     </p>
                 </div>
                 """, unsafe_allow_html=True)
-                if st.button("Start Your Audit (Demo Mode) →", use_container_width=True):
+                if st.button("Start Your Audit (Demo) →", use_container_width=True):
                     st.session_state.show_form = True
                     st.session_state.payment_verified = True
                     st.rerun()
         
+        st.markdown("""
+        <div class="cta-trust">
+            <span class="cta-trust-item">🔒 Secure payment</span>
+            <span class="cta-trust-item">💳 All cards accepted</span>
+            <span class="cta-trust-item">🛡️ Money-back guarantee</span>
+        </div>
+        """, unsafe_allow_html=True)
+        
         # Footer
         st.markdown("""
         <div class="footer">
-            <div class="footer-brand">© 2026 Profit Leak Audit · ABN Coming Soon</div>
+            <div class="footer-brand">© 2026 Profit Leak Audit</div>
             <div class="footer-links">
                 <a href="mailto:hello@profitleakaudit.com.au">Contact</a>
-                <a href="#">Privacy Policy</a>
-                <a href="#">Terms of Service</a>
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
             </div>
         </div>
         """, unsafe_allow_html=True)
