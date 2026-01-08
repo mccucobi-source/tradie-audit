@@ -23,7 +23,7 @@ st.set_page_config(
 from dotenv import load_dotenv
 load_dotenv()
 
-# Clean UI styling
+# Clean centered card UI
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -33,7 +33,7 @@ st.markdown("""
     }
     
     .stApp {
-        background: #f9fafb !important;
+        background: #f4f4f5 !important;
     }
     
     #MainMenu, footer, header, [data-testid="stToolbar"], [data-testid="stSidebar"], 
@@ -41,197 +41,166 @@ st.markdown("""
         display: none !important;
     }
     
+    /* Center the form */
     .block-container {
-        padding: 0 !important;
-        max-width: 100% !important;
+        max-width: 480px !important;
+        padding: 60px 20px 40px !important;
     }
     
-    /* Card container */
-    .form-card {
+    /* Card */
+    .card {
         background: #ffffff;
-        max-width: 520px;
-        margin: 40px auto;
-        border-radius: 16px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
-        overflow: hidden;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+        padding: 32px;
+        margin-bottom: 16px;
     }
     
-    /* Header */
-    .form-header {
-        padding: 32px 32px 24px;
-        border-bottom: 1px solid #f1f5f9;
-    }
-    
+    /* Brand */
     .brand {
-        font-size: 20px;
+        font-size: 18px;
         font-weight: 700;
-        color: #0f172a;
-        margin-bottom: 20px;
+        color: #18181b;
+        margin-bottom: 24px;
     }
     
-    .form-title {
-        font-size: 24px;
-        font-weight: 700;
-        color: #0f172a;
+    /* Title */
+    .title {
+        font-size: 22px;
+        font-weight: 600;
+        color: #18181b;
         margin: 0 0 6px;
-        line-height: 1.3;
     }
     
-    .form-desc {
-        font-size: 15px;
-        color: #64748b;
-        margin: 0;
+    .subtitle {
+        font-size: 14px;
+        color: #71717a;
+        margin: 0 0 28px;
         line-height: 1.5;
     }
     
-    /* Form body */
-    .form-body {
-        padding: 24px 32px 32px;
-    }
-    
-    /* Section titles */
-    .section-title {
-        font-size: 13px;
+    /* Section label */
+    .section-label {
+        font-size: 12px;
         font-weight: 600;
-        color: #0f172a;
-        margin: 0 0 16px;
-        padding-bottom: 8px;
-        border-bottom: 1px solid #f1f5f9;
+        color: #a1a1aa;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 12px;
     }
     
     /* Inputs */
     .stTextInput > label,
     .stSelectbox > label,
     .stFileUploader > label {
-        font-size: 14px !important;
+        font-size: 13px !important;
         font-weight: 500 !important;
-        color: #374151 !important;
-        margin-bottom: 6px !important;
+        color: #3f3f46 !important;
+        margin-bottom: 4px !important;
     }
     
     .stTextInput > div > div > input {
-        font-size: 15px !important;
-        border: 1px solid #e5e7eb !important;
+        font-size: 14px !important;
+        border: 1px solid #e4e4e7 !important;
         border-radius: 8px !important;
         padding: 10px 12px !important;
-        background: #fff !important;
-        color: #0f172a !important;
+        background: #fafafa !important;
     }
     
     .stTextInput > div > div > input:focus {
-        border-color: #0f172a !important;
-        box-shadow: 0 0 0 2px rgba(15,23,42,0.08) !important;
+        border-color: #18181b !important;
+        background: #fff !important;
+        box-shadow: none !important;
     }
     
     .stTextInput > div > div > input::placeholder {
-        color: #9ca3af !important;
+        color: #a1a1aa !important;
     }
     
     .stSelectbox > div > div {
-        border: 1px solid #e5e7eb !important;
+        border: 1px solid #e4e4e7 !important;
         border-radius: 8px !important;
-        background: #fff !important;
+        background: #fafafa !important;
+        font-size: 14px !important;
     }
     
-    /* File uploader */
+    /* File uploader - compact */
     .stFileUploader > div {
-        background: #f9fafb !important;
-        border: 1px dashed #d1d5db !important;
-        border-radius: 10px !important;
-        padding: 16px !important;
+        background: #fafafa !important;
+        border: 1px dashed #d4d4d8 !important;
+        border-radius: 8px !important;
+        padding: 12px !important;
     }
     
     .stFileUploader > div:hover {
-        background: #f3f4f6 !important;
-        border-color: #9ca3af !important;
+        border-color: #a1a1aa !important;
     }
     
     /* Button */
     .stButton > button {
         width: 100% !important;
-        font-size: 15px !important;
+        font-size: 14px !important;
         font-weight: 600 !important;
-        background: #0f172a !important;
+        background: #18181b !important;
         color: #fff !important;
         border: none !important;
         border-radius: 8px !important;
-        padding: 12px 20px !important;
-        margin-top: 8px !important;
+        padding: 12px 16px !important;
         cursor: pointer !important;
-        transition: background 0.15s !important;
     }
     
     .stButton > button:hover {
-        background: #1e293b !important;
+        background: #27272a !important;
     }
     
-    /* Success */
+    /* Success/Error */
+    .stSuccess, .stError, .stInfo {
+        font-size: 13px !important;
+        border-radius: 8px !important;
+        padding: 10px 12px !important;
+    }
+    
     .stSuccess {
         background: #f0fdf4 !important;
         border: 1px solid #bbf7d0 !important;
-        border-radius: 8px !important;
-        font-size: 14px !important;
-    }
-    
-    .stError {
-        border-radius: 8px !important;
-        font-size: 14px !important;
     }
     
     /* Footer */
-    .form-footer {
-        padding: 16px 32px;
-        background: #f9fafb;
-        border-top: 1px solid #f1f5f9;
+    .footer {
         text-align: center;
-    }
-    
-    .footer-text {
         font-size: 12px;
-        color: #9ca3af;
+        color: #a1a1aa;
+        padding: 8px 0;
     }
     
     /* Result */
-    .result-box {
-        background: #ecfdf5;
-        border-radius: 12px;
-        padding: 24px;
+    .result {
+        background: #f0fdf4;
+        border-radius: 10px;
+        padding: 20px;
         text-align: center;
         margin: 16px 0;
     }
     
     .result-label {
-        font-size: 13px;
+        font-size: 12px;
         color: #6b7280;
-        margin-bottom: 4px;
+        margin-bottom: 2px;
     }
     
     .result-value {
-        font-size: 36px;
+        font-size: 32px;
         font-weight: 700;
         color: #059669;
     }
     
-    /* Spacing fix */
-    .row-widget {
-        margin-bottom: 16px;
+    /* Spacing */
+    .spacer {
+        height: 20px;
     }
     
-    /* Hide extra padding */
-    .element-container {
-        margin-bottom: 0 !important;
-    }
-    
-    div[data-testid="column"] {
-        padding: 0 8px !important;
-    }
-    
-    div[data-testid="column"]:first-child {
-        padding-left: 0 !important;
-    }
-    
-    div[data-testid="column"]:last-child {
-        padding-right: 0 !important;
+    .spacer-sm {
+        height: 12px;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -248,76 +217,62 @@ def verify_session():
 
 def show_form(email: str = None):
     
-    # Start card
+    # Card start
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    
+    # Header
     st.markdown("""
-    <div class="form-card">
-        <div class="form-header">
-            <div class="brand">Brace</div>
-            <h1 class="form-title">Upload your business data</h1>
-            <p class="form-desc">We'll analyze your numbers and send your profit leak report within 48 hours.</p>
-        </div>
-        <div class="form-body">
+        <div class="brand">Brace</div>
+        <h1 class="title">Upload your data</h1>
+        <p class="subtitle">We'll find your profit leaks and send your report within 48 hours.</p>
     """, unsafe_allow_html=True)
     
     # Business details
-    st.markdown('<div class="section-title">Business Details</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-label">Your Details</div>', unsafe_allow_html=True)
     
-    business_name = st.text_input("Business name", placeholder="e.g. Smith Electrical")
+    business_name = st.text_input("Business name", placeholder="e.g. Smith Electrical", label_visibility="collapsed")
     
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns([3, 2])
     with col1:
-        contact_email = st.text_input("Email", value=email or "", placeholder="you@example.com")
+        contact_email = st.text_input("Email", value=email or "", placeholder="Email address", label_visibility="collapsed")
     with col2:
-        trade = st.selectbox("Trade", ["Electrician", "Plumber", "Carpenter", "HVAC", "Builder", "Other"])
+        trade = st.selectbox("Trade", ["Electrician", "Plumber", "Carpenter", "HVAC", "Builder", "Other"], label_visibility="collapsed")
     
-    location = st.text_input("Location", placeholder="e.g. Sydney, NSW")
+    location = st.text_input("Location", placeholder="Location (e.g. Sydney)", label_visibility="collapsed")
     
-    st.markdown("<div style='height: 24px'></div>", unsafe_allow_html=True)
+    st.markdown('<div class="spacer"></div>', unsafe_allow_html=True)
     
-    # File uploads
-    st.markdown('<div class="section-title">Upload Files</div>', unsafe_allow_html=True)
+    # Files
+    st.markdown('<div class="section-label">Your Files</div>', unsafe_allow_html=True)
     
-    invoices = st.file_uploader(
-        "Invoices (last 12 months)", 
-        type=['pdf', 'xlsx', 'csv'], 
-        accept_multiple_files=True,
-        key="inv"
-    )
+    invoices = st.file_uploader("Invoices", type=['pdf', 'xlsx', 'csv'], accept_multiple_files=True, key="inv", label_visibility="collapsed")
     if invoices:
-        st.success(f"✓ {len(invoices)} invoice file(s) ready")
+        st.success(f"✓ {len(invoices)} invoice(s)")
     
-    expenses = st.file_uploader(
-        "Expenses or bank statements", 
-        type=['pdf', 'xlsx', 'csv'], 
-        accept_multiple_files=True,
-        key="exp"
-    )
+    st.markdown('<div class="spacer-sm"></div>', unsafe_allow_html=True)
+    
+    expenses = st.file_uploader("Expenses", type=['pdf', 'xlsx', 'csv'], accept_multiple_files=True, key="exp", label_visibility="collapsed")
     if expenses:
-        st.success(f"✓ {len(expenses)} expense file(s) ready")
+        st.success(f"✓ {len(expenses)} file(s)")
     
-    st.markdown("<div style='height: 16px'></div>", unsafe_allow_html=True)
+    st.markdown('<div class="spacer"></div>', unsafe_allow_html=True)
     
     # Submit
-    if st.button("Submit & Run Audit"):
+    if st.button("Submit"):
         if not business_name:
-            st.error("Please enter your business name")
+            st.error("Enter your business name")
         elif not contact_email:
-            st.error("Please enter your email")
+            st.error("Enter your email")
         elif not invoices and not expenses:
-            st.error("Please upload at least one file")
+            st.error("Upload at least one file")
         else:
             run_audit(business_name, contact_email, trade.lower(), location or "Australia", invoices or [], expenses or [])
     
-    # Close form body
-    st.markdown("</div>", unsafe_allow_html=True)
+    # Card end
+    st.markdown('</div>', unsafe_allow_html=True)
     
     # Footer
-    st.markdown("""
-        <div class="form-footer">
-            <span class="footer-text">🔒 Your data is encrypted and deleted after 30 days</span>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown('<div class="footer">🔒 Encrypted & deleted after 30 days</div>', unsafe_allow_html=True)
 
 
 def run_audit(business_name, email, trade_type, location, invoices, expenses):
@@ -326,9 +281,9 @@ def run_audit(business_name, email, trade_type, location, invoices, expenses):
     from src.agents.analyzer import Analyzer, BusinessContext
     from src.agents.report_generator import ReportGenerator
     
-    with st.status("Analyzing your data...", expanded=True) as status:
+    with st.status("Analyzing...", expanded=True) as status:
         
-        st.write("Uploading files...")
+        st.write("Uploading...")
         handler = FileHandler()
         folder = handler.create_customer_folder(business_name)
         
@@ -347,22 +302,22 @@ def run_audit(business_name, email, trade_type, location, invoices, expenses):
         results = extractor.extract_from_folder(str(folder))
         combined = extractor.combine_results(results)
         
-        st.write("Running analysis...")
+        st.write("Analyzing...")
         context = BusinessContext(trade_type=trade_type, location=location, years_in_business=5, current_rate=100.0, hours_per_week=45, revenue_goal=250000)
         analyzer = Analyzer()
         analysis = analyzer.analyze(combined, context)
         
-        st.write("Generating report...")
+        st.write("Creating report...")
         generator = ReportGenerator(output_dir="./output")
         report = generator.generate_report(analysis, context, business_name)
         
-        status.update(label="✓ Complete", state="complete")
+        status.update(label="✓ Done", state="complete")
     
     opp = analysis.guarantee_check.get('total_opportunity', 0) * 0.7
     
     st.markdown(f"""
-    <div class="result-box">
-        <div class="result-label">Opportunity identified</div>
+    <div class="result">
+        <div class="result-label">Opportunity found</div>
         <div class="result-value">${opp:,.0f}</div>
     </div>
     """, unsafe_allow_html=True)
@@ -371,32 +326,24 @@ def run_audit(business_name, email, trade_type, location, invoices, expenses):
     with col1:
         if Path(report['html_report']).exists():
             with open(report['html_report'], 'r') as f:
-                st.download_button("📄 Download Report", f.read(), file_name=f"{business_name}_report.html", mime="text/html", use_container_width=True)
+                st.download_button("📄 Report", f.read(), file_name=f"{business_name}_report.html", mime="text/html", use_container_width=True)
     with col2:
         if Path(report['excel_report']).exists():
             with open(report['excel_report'], 'rb') as f:
-                st.download_button("📊 Download Excel", f.read(), file_name=f"{business_name}_workbook.xlsx", use_container_width=True)
+                st.download_button("📊 Excel", f.read(), file_name=f"{business_name}_workbook.xlsx", use_container_width=True)
     
-    st.info(f"📧 Reports also sent to {email}")
+    st.info(f"📧 Also sent to {email}")
 
 
 def show_locked():
+    st.markdown('<div class="card" style="text-align:center;">', unsafe_allow_html=True)
     st.markdown("""
-    <div class="form-card">
-        <div class="form-header">
-            <div class="brand">Brace</div>
-            <h1 class="form-title">Access Required</h1>
-            <p class="form-desc">Please complete your purchase to access the audit form.</p>
-        </div>
-        <div class="form-body" style="text-align: center; padding: 40px 32px;">
+        <div class="brand">Brace</div>
+        <h1 class="title">Access Required</h1>
+        <p class="subtitle">Complete your purchase to access the audit form.</p>
     """, unsafe_allow_html=True)
-    
     st.link_button("Go to Brace →", "https://brace-rvnk.vercel.app", use_container_width=True)
-    
-    st.markdown("""
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
 def main():
