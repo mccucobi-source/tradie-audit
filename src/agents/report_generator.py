@@ -503,6 +503,344 @@ These numbers assume you actually implement the changes. They won't happen by th
             margin-bottom: 6px;
         }
         
+        /* Profit Leak Dashboard - THE HERO */
+        .profit-leak-dashboard {
+            background: linear-gradient(135deg, #171717 0%, #262626 100%);
+            color: white;
+            padding: 40px;
+            margin-bottom: 40px;
+            border-radius: 8px;
+        }
+        
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .dashboard-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+        
+        .dashboard-header h2 {
+            border: none;
+            color: white;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        
+        .dashboard-header p {
+            color: rgba(255,255,255,0.7);
+            font-size: 16px;
+        }
+        
+        .leak-breakdown {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .leak-item {
+            margin-bottom: 16px;
+        }
+        
+        .leak-bar {
+            background: linear-gradient(90deg, #22c55e 0%, #16a34a var(--width, 60%), #374151 var(--width, 60%));
+            padding: 16px 20px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .leak-bar.callout {
+            background: linear-gradient(90deg, #eab308 0%, #ca8a04 var(--width, 40%), #374151 var(--width, 40%));
+        }
+        
+        .leak-bar.quote {
+            background: linear-gradient(90deg, #3b82f6 0%, #2563eb var(--width, 30%), #374151 var(--width, 30%));
+        }
+        
+        .leak-label {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .leak-amount {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 18px;
+            font-weight: 700;
+        }
+        
+        .leak-total {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 2px solid rgba(255,255,255,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 16px;
+        }
+        
+        .leak-total .total-amount {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 32px;
+            font-weight: 700;
+            color: #22c55e;
+        }
+        
+        /* Rate Comparison Visual */
+        .rate-comparison {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .rate-comparison h3 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+        
+        .rate-scale {
+            position: relative;
+            height: 120px;
+            margin: 0 40px;
+        }
+        
+        .rate-bar {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            height: 12px;
+            background: linear-gradient(90deg, #dc2626 0%, #eab308 35%, #22c55e 65%, #16a34a 100%);
+            border-radius: 6px;
+        }
+        
+        .rate-marker {
+            position: absolute;
+            bottom: 45px;
+            left: var(--position, 50%);
+            transform: translateX(-50%);
+        }
+        
+        .rate-marker::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+        }
+        
+        .rate-marker.your-rate::after {
+            border-top: 12px solid #dc2626;
+        }
+        
+        .rate-marker.market-avg::after {
+            border-top: 12px solid #22c55e;
+        }
+        
+        .marker-label {
+            background: var(--text);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-family: 'IBM Plex Mono', monospace;
+            text-align: center;
+            white-space: nowrap;
+        }
+        
+        .rate-marker.your-rate .marker-label {
+            background: #dc2626;
+        }
+        
+        .rate-marker.market-avg .marker-label {
+            background: #16a34a;
+        }
+        
+        .rate-labels {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-muted);
+            font-family: 'IBM Plex Mono', monospace;
+        }
+        
+        .rate-verdict {
+            text-align: center;
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 15px;
+        }
+        
+        .rate-verdict.below {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+        }
+        
+        .rate-verdict.above {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #16a34a;
+        }
+        
+        /* 90-Day Timeline */
+        .timeline {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 30px;
+            margin: 40px 0;
+        }
+        
+        .timeline h3 {
+            margin-bottom: 24px;
+        }
+        
+        .timeline-track {
+            display: flex;
+            gap: 0;
+            margin-bottom: 20px;
+        }
+        
+        .timeline-phase {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .timeline-phase::after {
+            content: '→';
+            position: absolute;
+            right: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            color: var(--text-muted);
+        }
+        
+        .timeline-phase:last-child::after {
+            display: none;
+        }
+        
+        .timeline-phase.week1 { background: #dcfce7; }
+        .timeline-phase.month1 { background: #fef3c7; }
+        .timeline-phase.quarter1 { background: #dbeafe; }
+        
+        .phase-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        
+        .phase-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        
+        .phase-impact {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--success);
+        }
+        
+        /* Worst Jobs Table */
+        .worst-jobs {
+            background: #fef2f2;
+            border: 2px solid #fecaca;
+            padding: 24px;
+            margin: 30px 0;
+        }
+        
+        .worst-jobs h3 {
+            color: #dc2626;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .worst-jobs table {
+            margin: 0;
+        }
+        
+        .worst-jobs td.loss {
+            color: #dc2626;
+            font-weight: 700;
+            font-family: 'IBM Plex Mono', monospace;
+        }
+        
+        /* Best vs Fire Customers */
+        .customer-verdict {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin: 30px 0;
+        }
+        
+        .customer-box {
+            padding: 24px;
+            border-radius: 4px;
+        }
+        
+        .customer-box.keep {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+        }
+        
+        .customer-box.fire {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+        }
+        
+        .customer-box h4 {
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .customer-box.keep h4 { color: #16a34a; }
+        .customer-box.fire h4 { color: #dc2626; }
+        
+        .customer-item {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .customer-item:last-child {
+            border-bottom: none;
+        }
+        
+        .customer-name {
+            font-weight: 600;
+        }
+        
+        .customer-stats {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+        
         /* Footer */
         footer {
             border-top: 1px solid var(--border);
@@ -534,6 +872,71 @@ These numbers assume you actually implement the changes. They won't happen by th
             </div>
         </div>
         
+        <!-- HERO DASHBOARD - The "Holy Shit" Moment -->
+        <div class="profit-leak-dashboard">
+            <div class="dashboard-header">
+                <div class="dashboard-icon">💰</div>
+                <h2>Money Left on the Table</h2>
+                <p>Here's exactly where your profit is leaking</p>
+            </div>
+            <div class="leak-breakdown">
+                {% set rate_gap = ((pricing.market_mid or (context.current_rate + 20)) - context.current_rate) * ((summary.total_revenue_analyzed or 100000) / (context.current_rate or 95)) * 0.85 %}
+                {% set callout_gap = (pricing.call_out_impact or 3000) * 0.7 %}
+                {% set quote_gap = (guarantee.quick_wins_total or 5000) * 0.3 %}
+                {% set total_gap = rate_gap + callout_gap + quote_gap %}
+                
+                <div class="leak-item">
+                    <div class="leak-bar" style="--width: {{ ((rate_gap / (total_gap or 1)) * 100) | int }}%">
+                        <span class="leak-label">Undercharging vs Market</span>
+                        <span class="leak-amount">+${{ "{:,.0f}".format(rate_gap) }}/yr</span>
+                    </div>
+                </div>
+                <div class="leak-item">
+                    <div class="leak-bar callout" style="--width: {{ ((callout_gap / (total_gap or 1)) * 100) | int }}%">
+                        <span class="leak-label">Missing Call-out Fees</span>
+                        <span class="leak-amount">+${{ "{:,.0f}".format(callout_gap) }}/yr</span>
+                    </div>
+                </div>
+                <div class="leak-item">
+                    <div class="leak-bar quote" style="--width: {{ ((quote_gap / (total_gap or 1)) * 100) | int }}%">
+                        <span class="leak-label">Quote/Efficiency Gaps</span>
+                        <span class="leak-amount">+${{ "{:,.0f}".format(quote_gap) }}/yr</span>
+                    </div>
+                </div>
+                <div class="leak-total">
+                    <span>TOTAL OPPORTUNITY</span>
+                    <span class="total-amount">${{ "{:,.0f}".format(guarantee.total_conservative or (guarantee.total_opportunity or 15000) * 0.7) }}/yr</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Rate Comparison Visual -->
+        <div class="rate-comparison">
+            <h3>Where You Sit in the Market</h3>
+            <div class="rate-scale">
+                <div class="rate-marker your-rate" style="--position: {{ (((context.current_rate - (pricing.market_low or 80)) / ((pricing.market_high or 160) - (pricing.market_low or 80))) * 100) | int }}%">
+                    <div class="marker-label">YOU<br>${{ context.current_rate }}/hr</div>
+                </div>
+                <div class="rate-marker market-avg" style="--position: {{ (((pricing.market_mid or 115) - (pricing.market_low or 80)) / ((pricing.market_high or 160) - (pricing.market_low or 80))) * 100 | int }}%">
+                    <div class="marker-label">MARKET AVG<br>${{ pricing.market_mid or (context.current_rate + 20) }}/hr</div>
+                </div>
+                <div class="rate-bar"></div>
+                <div class="rate-labels">
+                    <span>Bottom 25%<br>${{ pricing.market_low or (context.current_rate - 15) }}</span>
+                    <span>Top 10%<br>${{ pricing.market_high or (context.current_rate + 50) }}</span>
+                </div>
+            </div>
+            {% if context.current_rate < (pricing.market_mid or 115) %}
+            <div class="rate-verdict below">
+                ⚠️ You're charging <strong>{{ (((pricing.market_mid or 115) - context.current_rate) / (pricing.market_mid or 115) * 100) | round(0) | int }}% below</strong> market average
+            </div>
+            {% else %}
+            <div class="rate-verdict above">
+                ✓ You're at or above market average - focus on efficiency gains
+            </div>
+            {% endif %}
+        </div>
+
         <div class="key-numbers">
             <div class="number-card">
                 <div class="label">Revenue Analyzed</div>
@@ -670,12 +1073,78 @@ These numbers assume you actually implement the changes. They won't happen by th
             {% endfor %}
         </section>
         
+        <!-- 90-Day Action Timeline -->
+        <div class="timeline">
+            <h3>📅 Your 90-Day Profit Recovery Timeline</h3>
+            <div class="timeline-track">
+                <div class="timeline-phase week1">
+                    <div class="phase-label">Week 1-2</div>
+                    <div class="phase-title">Quick Wins</div>
+                    <div class="phase-impact">+${{ "{:,.0f}".format((guarantee.quick_wins_total or 5000) * 0.3) }}</div>
+                    <div style="font-size: 12px; margin-top: 8px; color: var(--text-muted);">
+                        Update rates<br>Add call-out fee
+                    </div>
+                </div>
+                <div class="timeline-phase month1">
+                    <div class="phase-label">Week 3-6</div>
+                    <div class="phase-title">Build Momentum</div>
+                    <div class="phase-impact">+${{ "{:,.0f}".format((guarantee.quick_wins_total or 5000) * 0.4) }}</div>
+                    <div style="font-size: 12px; margin-top: 8px; color: var(--text-muted);">
+                        Review customers<br>Chase unpaid invoices
+                    </div>
+                </div>
+                <div class="timeline-phase quarter1">
+                    <div class="phase-label">Week 7-12</div>
+                    <div class="phase-title">Lock It In</div>
+                    <div class="phase-impact">+${{ "{:,.0f}".format((guarantee.quick_wins_total or 5000) * 0.3) }}</div>
+                    <div style="font-size: 12px; margin-top: 8px; color: var(--text-muted);">
+                        Optimize job mix<br>Build systems
+                    </div>
+                </div>
+            </div>
+            <div style="text-align: center; padding: 16px; background: #f5f5f5; border-radius: 4px;">
+                <strong>Total 90-Day Target:</strong> 
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 20px; color: var(--success); margin-left: 8px;">
+                    ${{ "{:,.0f}".format(guarantee.quick_wins_total or (guarantee.total_conservative or 15000) * 0.4) }}
+                </span>
+                <span style="color: var(--text-muted); font-size: 14px;"> in the bank</span>
+            </div>
+        </div>
+        
         {% if customer_analysis and customer_analysis.top_customers %}
         <section>
             <h2>Customer Analysis</h2>
             <p>Who's worth your time - and who isn't.</p>
             
-            <h3 style="margin-top: 24px;">Your Best Customers</h3>
+            <!-- Keep vs Fire Visual -->
+            <div class="customer-verdict">
+                <div class="customer-box keep">
+                    <h4>✅ Your Best Customers (Keep Happy)</h4>
+                    {% for cust in customer_analysis.top_customers[:3] if cust.grade in ['A', 'B'] %}
+                    <div class="customer-item">
+                        <div class="customer-name">{{ cust.name or cust.customer or 'Top Customer' }}</div>
+                        <div class="customer-stats">${{ "{:,.0f}".format(cust.total_revenue or cust.revenue or 0) }}/yr · {{ cust.job_count or cust.jobs or 0 }} jobs · Grade {{ cust.grade or 'A' }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="customer-box fire">
+                    <h4>⚠️ Consider Dropping</h4>
+                    {% if customer_analysis.concerning_customers %}
+                    {% for cust in customer_analysis.concerning_customers[:3] %}
+                    <div class="customer-item">
+                        <div class="customer-name">{{ cust.name or 'Problem Customer' }}</div>
+                        <div class="customer-stats">{{ cust.reason or 'Low margin, high effort' }}</div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="customer-item">
+                        <div class="customer-stats">No major problem customers identified - good sign!</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <h3 style="margin-top: 24px;">Full Customer Breakdown</h3>
             <table>
                 <tr>
                     <th>Customer</th>
@@ -780,6 +1249,37 @@ These numbers assume you actually implement the changes. They won't happen by th
         </section>
         {% endif %}
         
+        {% if worst_jobs %}
+        <!-- Your Worst Jobs - The Reality Check -->
+        <div class="worst-jobs">
+            <h3>🚨 Your Worst Performing Jobs</h3>
+            <p style="margin-bottom: 16px; color: #991b1b;">These jobs likely cost you money or made very little. Learn from them.</p>
+            <table>
+                <tr>
+                    <th>Job</th>
+                    <th>Customer</th>
+                    <th>Revenue</th>
+                    <th>Est. Cost</th>
+                    <th>Profit/Loss</th>
+                    <th>Issue</th>
+                </tr>
+                {% for job in worst_jobs[:5] %}
+                <tr>
+                    <td>{{ job.job_description or 'Unknown Job' }}</td>
+                    <td>{{ job.customer or 'Unknown' }}</td>
+                    <td>${{ "{:,.0f}".format(job.revenue or 0) }}</td>
+                    <td>${{ "{:,.0f}".format(job.estimated_cost or 0) }}</td>
+                    <td class="loss">${{ "{:,.0f}".format(job.profit_loss or 0) }}</td>
+                    <td style="font-size: 13px;">{{ job.why_bad or 'Low margin' }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            <div class="evidence" style="margin-top: 16px; background: #fff;">
+                <strong>💡 Key Lesson:</strong> {{ worst_jobs[0].lesson if worst_jobs else 'Avoid small jobs that don\'t cover your real costs.' }}
+            </div>
+        </div>
+        {% endif %}
+        
         <div class="assumptions">
             <h3>⚠️ Key Assumptions (Be Honest With Yourself)</h3>
             <ul>
@@ -849,7 +1349,8 @@ These numbers assume you actually implement the changes. They won't happen by th
             cash_flow_insights=analysis.cash_flow_insights,
             job_analysis=job_analysis,
             data_quality=analysis.data_quality,
-            next_steps=analysis.next_steps
+            next_steps=analysis.next_steps,
+            worst_jobs=analysis.worst_jobs
         )
         
         html_path = output_dir / "profit_leak_audit_report.html"

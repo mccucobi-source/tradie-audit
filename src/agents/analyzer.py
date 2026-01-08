@@ -44,6 +44,7 @@ class AnalysisResult(BaseModel):
     expense_insights: dict = {}
     missing_data: dict = {}
     next_steps: dict = {}
+    worst_jobs: list = []
 
 
 class Analyzer:
@@ -183,7 +184,8 @@ class Analyzer:
             cash_flow_insights=analysis.get("cash_flow_insights", {}),
             expense_insights=analysis.get("expense_insights", {}),
             missing_data=analysis.get("missing_data", {}),
-            next_steps=analysis.get("next_steps", {})
+            next_steps=analysis.get("next_steps", {}),
+            worst_jobs=analysis.get("worst_jobs", [])
         )
     
     def _normalize_profitability(self, analysis: dict) -> dict:

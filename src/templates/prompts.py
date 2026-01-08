@@ -395,6 +395,19 @@ Return a JSON object with these keys:
    }}
 ]
 
+5b. "worst_jobs": [
+   {{
+     "job_description": "specific job from their data",
+     "customer": "customer name",
+     "revenue": number,
+     "estimated_cost": number,
+     "profit_loss": number,
+     "effective_rate": number,
+     "why_bad": "brief explanation",
+     "lesson": "what to do differently"
+   }}
+] (List the 3-5 worst performing jobs you can identify from their data - jobs where they likely lost money or made very little. Be specific.)
+
 6. "customer_analysis": {{
    "top_customers": [
      {{
