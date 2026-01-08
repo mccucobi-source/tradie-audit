@@ -159,20 +159,33 @@ st.markdown("""
     /* Buttons */
     .stButton > button {
         width: 100% !important;
-        font-size: 16px !important;
+        font-size: 15px !important;
         font-weight: 600 !important;
         background: #fbbf24 !important;
         color: #000 !important;
         border: none !important;
-        border-radius: 12px !important;
-        padding: 16px 24px !important;
-        margin-top: 24px !important;
+        border-radius: 10px !important;
+        padding: 14px 20px !important;
+        margin-top: 16px !important;
         transition: all 0.2s !important;
     }
     
     .stButton > button:hover {
         background: #fcd34d !important;
-        transform: translateY(-2px) !important;
+        transform: translateY(-1px) !important;
+    }
+    
+    /* Back button - first column */
+    div[data-testid="column"]:first-child .stButton > button {
+        background: transparent !important;
+        color: #71717a !important;
+        border: 1px solid #333 !important;
+    }
+    
+    div[data-testid="column"]:first-child .stButton > button:hover {
+        background: #1a1a1a !important;
+        color: #fff !important;
+        transform: none !important;
     }
     
     /* Secondary button */
@@ -381,20 +394,22 @@ def show_onboarding(email: str = None):
             rate = st.number_input("rate", min_value=50, max_value=300, value=data.get('hourly_rate', 95), 
                                   placeholder="Hourly rate ($)", label_visibility="collapsed")
         
-        if st.button("Continue →"):
-            if email_input and location:
-                data['trade'] = trade
-                data['location'] = location
-                data['email'] = email_input
-                data['hourly_rate'] = rate
-                next_step()
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("← Back", key="back2"):
+                prev_step()
                 st.rerun()
-            else:
-                st.error("Please fill in all fields")
-        
-        if st.button("← Back", key="back2", type="secondary"):
-            prev_step()
-            st.rerun()
+        with col2:
+            if st.button("Continue →", key="cont2"):
+                if email_input and location:
+                    data['trade'] = trade
+                    data['location'] = location
+                    data['email'] = email_input
+                    data['hourly_rate'] = rate
+                    next_step()
+                    st.rerun()
+                else:
+                    st.error("Please fill in all fields")
     
     # ===== STEP 3: Biggest Challenge =====
     elif step == 3:
@@ -408,14 +423,16 @@ def show_onboarding(email: str = None):
             label_visibility="collapsed"
         )
         
-        if st.button("Continue →"):
-            data['challenge'] = challenge
-            next_step()
-            st.rerun()
-        
-        if st.button("← Back", key="back3", type="secondary"):
-            prev_step()
-            st.rerun()
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("← Back", key="back3"):
+                prev_step()
+                st.rerun()
+        with col2:
+            if st.button("Continue →", key="cont3"):
+                data['challenge'] = challenge
+                next_step()
+                st.rerun()
     
     # ===== STEP 4: Upload Files =====
     elif step == 4:
@@ -427,16 +444,18 @@ def show_onboarding(email: str = None):
         if files:
             st.success(f"✓ {len(files)} file(s) ready")
         
-        if st.button("Run My Audit →"):
-            if files:
-                data['files'] = files
-                run_audit(data)
-            else:
-                st.error("Please upload at least one file")
-        
-        if st.button("← Back", key="back4", type="secondary"):
-            prev_step()
-            st.rerun()
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("← Back", key="back4"):
+                prev_step()
+                st.rerun()
+        with col2:
+            if st.button("Run Audit →", key="run"):
+                if files:
+                    data['files'] = files
+                    run_audit(data)
+                else:
+                    st.error("Please upload at least one file")
     
     # Footer
     st.markdown('<div class="footer">🔒 Bank-level encryption · Deleted after 30 days</div>', unsafe_allow_html=True)
