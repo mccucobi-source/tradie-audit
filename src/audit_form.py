@@ -1,7 +1,6 @@
 """
 Brace Profit Leak Audit - File Upload Portal
-This is the post-payment audit form that receives customers from the Brace landing page.
-Clean, focused interface for file upload and audit processing.
+Premium audit form that matches the Brace landing page design.
 """
 
 import os
@@ -25,196 +24,429 @@ st.set_page_config(
 from dotenv import load_dotenv
 load_dotenv()
 
-# Clean Brace-branded styling
+# Premium Brace-branded styling matching the landing page
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
     
     :root {
-        --bg: #ffffff;
-        --bg-soft: #f8fafc;
-        --border: #e2e8f0;
+        --bg: #fafafa;
+        --bg-white: #ffffff;
+        --bg-dark: #0f172a;
+        --border: #e5e7eb;
+        --border-light: #f3f4f6;
         --text: #0f172a;
-        --text-secondary: #475569;
-        --text-muted: #94a3b8;
-        --yellow: #fcd34d;
-        --yellow-dark: #f59e0b;
+        --text-secondary: #4b5563;
+        --text-muted: #9ca3af;
+        --yellow: #fbbf24;
+        --yellow-light: #fef3c7;
         --green: #10b981;
-        --green-light: #ecfdf5;
+        --green-light: #d1fae5;
+        --blue: #3b82f6;
+        --blue-light: #dbeafe;
     }
     
     .stApp {
-        background: var(--bg);
+        background: var(--bg) !important;
     }
     
-    #MainMenu, footer, header, [data-testid="stToolbar"], [data-testid="stSidebar"] {
+    #MainMenu, footer, header, [data-testid="stToolbar"], [data-testid="stSidebar"], 
+    [data-testid="stDecoration"], .stDeployButton {
         display: none !important;
     }
     
     .block-container {
-        padding: 2rem 1rem !important;
-        max-width: 720px !important;
+        padding: 0 !important;
+        max-width: 100% !important;
     }
     
-    /* Header */
-    .audit-header {
-        text-align: center;
-        padding: 40px 0 32px;
+    /* ===== HEADER ===== */
+    .brace-header {
+        background: var(--bg-white);
         border-bottom: 1px solid var(--border);
-        margin-bottom: 40px;
-    }
-    
-    .audit-logo {
-        font-family: 'Inter', sans-serif;
-        font-weight: 800;
-        font-size: 24px;
-        color: var(--text);
-        margin-bottom: 8px;
-    }
-    
-    .audit-title {
-        font-family: 'Inter', sans-serif;
-        font-size: 32px;
-        font-weight: 700;
-        color: var(--text);
-        margin: 0 0 8px;
-    }
-    
-    .audit-subtitle {
-        font-family: 'Inter', sans-serif;
-        font-size: 16px;
-        color: var(--text-secondary);
-    }
-    
-    /* Cards */
-    .form-card {
-        background: var(--bg-soft);
-        border: 1px solid var(--border);
-        border-radius: 16px;
-        padding: 28px;
-        margin-bottom: 20px;
-    }
-    
-    .form-card-header {
+        padding: 16px 24px;
         display: flex;
         align-items: center;
-        gap: 12px;
-        margin-bottom: 20px;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 100;
     }
     
-    .form-card-num {
-        width: 28px;
-        height: 28px;
-        background: var(--text);
+    .brace-logo {
+        font-family: 'Inter', sans-serif;
+        font-weight: 800;
+        font-size: 22px;
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .brace-logo-icon {
+        width: 32px;
+        height: 32px;
+        background: var(--yellow);
         border-radius: 8px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-family: 'Inter', sans-serif;
-        font-size: 13px;
-        font-weight: 600;
-        color: white;
-    }
-    
-    .form-card-title {
-        font-family: 'Inter', sans-serif;
         font-size: 16px;
-        font-weight: 600;
-        color: var(--text);
     }
     
-    /* Verification badge */
-    .verified-badge {
+    .header-badge {
+        background: var(--green-light);
+        color: var(--green);
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-family: 'Inter', sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    /* ===== HERO SECTION ===== */
+    .hero-section {
+        background: linear-gradient(180deg, var(--bg-white) 0%, var(--bg) 100%);
+        padding: 60px 24px 40px;
+        text-align: center;
+    }
+    
+    .hero-badge {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        background: var(--green-light);
-        border: 1px solid rgba(16, 185, 129, 0.2);
-        padding: 12px 20px;
-        border-radius: 12px;
+        background: var(--yellow-light);
+        color: #92400e;
+        padding: 8px 16px;
+        border-radius: 24px;
         font-family: 'Inter', sans-serif;
-        font-size: 14px;
-        font-weight: 500;
-        color: var(--green);
-        margin-bottom: 32px;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 20px;
     }
     
-    /* Streamlit overrides */
+    .hero-title {
+        font-family: 'Inter', sans-serif;
+        font-size: 36px;
+        font-weight: 800;
+        color: var(--text);
+        margin: 0 0 12px;
+        line-height: 1.2;
+    }
+    
+    .hero-subtitle {
+        font-family: 'Inter', sans-serif;
+        font-size: 17px;
+        color: var(--text-secondary);
+        max-width: 500px;
+        margin: 0 auto 24px;
+        line-height: 1.6;
+    }
+    
+    .trust-badges {
+        display: flex;
+        justify-content: center;
+        gap: 24px;
+        flex-wrap: wrap;
+    }
+    
+    .trust-badge {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-family: 'Inter', sans-serif;
+        font-size: 13px;
+        color: var(--text-muted);
+    }
+    
+    /* ===== FORM CONTAINER ===== */
+    .form-container {
+        max-width: 640px;
+        margin: 0 auto;
+        padding: 0 24px 60px;
+    }
+    
+    /* ===== STEP CARDS ===== */
+    .step-card {
+        background: var(--bg-white);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 16px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    
+    .step-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 20px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--border-light);
+    }
+    
+    .step-number {
+        width: 32px;
+        height: 32px;
+        background: var(--text);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+        color: white;
+    }
+    
+    .step-info {
+        flex: 1;
+    }
+    
+    .step-title {
+        font-family: 'Inter', sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text);
+        margin: 0 0 2px;
+    }
+    
+    .step-desc {
+        font-family: 'Inter', sans-serif;
+        font-size: 13px;
+        color: var(--text-muted);
+        margin: 0;
+    }
+    
+    .step-icon {
+        font-size: 20px;
+    }
+    
+    /* ===== FORM INPUTS ===== */
     .stTextInput > div > div > input,
-    .stNumberInput > div > div > input,
-    .stSelectbox > div > div {
-        background: white !important;
+    .stNumberInput > div > div > input {
+        background: var(--bg) !important;
         border: 1px solid var(--border) !important;
         border-radius: 10px !important;
         font-family: 'Inter', sans-serif !important;
-        padding: 12px 16px !important;
+        font-size: 15px !important;
+        padding: 14px 16px !important;
+        color: var(--text) !important;
+        transition: all 0.2s !important;
+    }
+    
+    .stTextInput > div > div > input:focus,
+    .stNumberInput > div > div > input:focus {
+        border-color: var(--text) !important;
+        box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1) !important;
     }
     
     .stTextInput > label,
     .stNumberInput > label,
     .stSelectbox > label,
+    .stSlider > label,
     .stFileUploader > label {
         font-family: 'Inter', sans-serif !important;
         font-size: 13px !important;
-        font-weight: 500 !important;
-        color: var(--text-secondary) !important;
+        font-weight: 600 !important;
+        color: var(--text) !important;
+        margin-bottom: 6px !important;
     }
     
+    .stSelectbox > div > div {
+        background: var(--bg) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 10px !important;
+        font-family: 'Inter', sans-serif !important;
+    }
+    
+    .stSlider > div > div > div {
+        background: var(--text) !important;
+    }
+    
+    /* ===== FILE UPLOADER ===== */
+    .stFileUploader > div {
+        background: var(--bg) !important;
+        border: 2px dashed var(--border) !important;
+        border-radius: 12px !important;
+        padding: 20px !important;
+        transition: all 0.2s !important;
+    }
+    
+    .stFileUploader > div:hover {
+        border-color: var(--text-muted) !important;
+        background: var(--bg-white) !important;
+    }
+    
+    .upload-hint {
+        background: var(--blue-light);
+        color: #1e40af;
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-family: 'Inter', sans-serif;
+        font-size: 13px;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    /* ===== BUTTONS ===== */
     .stButton > button {
         background: var(--text) !important;
         color: white !important;
         font-family: 'Inter', sans-serif !important;
-        font-size: 15px !important;
+        font-size: 16px !important;
         font-weight: 600 !important;
         border: none !important;
-        border-radius: 10px !important;
-        padding: 14px 28px !important;
+        border-radius: 12px !important;
+        padding: 16px 32px !important;
         transition: all 0.2s !important;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25) !important;
     }
     
     .stButton > button:hover {
         background: #1e293b !important;
-        transform: translateY(-2px);
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 20px rgba(15, 23, 42, 0.35) !important;
     }
     
-    .stFileUploader > div {
-        background: white !important;
-        border: 2px dashed var(--border) !important;
-        border-radius: 12px !important;
-    }
-    
+    /* ===== SUCCESS MESSAGES ===== */
     .stSuccess {
         background: var(--green-light) !important;
-        border: 1px solid rgba(16, 185, 129, 0.2) !important;
+        border: none !important;
         border-radius: 10px !important;
+        color: #065f46 !important;
     }
     
-    /* Results */
+    .file-success {
+        background: var(--green-light);
+        color: #065f46;
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-family: 'Inter', sans-serif;
+        font-size: 13px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 8px;
+    }
+    
+    /* ===== RESULTS ===== */
     .result-card {
-        background: white;
-        border: 2px solid var(--yellow);
+        background: linear-gradient(135deg, var(--bg-white) 0%, #f0fdf4 100%);
+        border: 2px solid var(--green);
         border-radius: 20px;
-        padding: 40px;
+        padding: 48px 32px;
         text-align: center;
-        box-shadow: 0 0 0 4px rgba(252, 211, 77, 0.2);
+        box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.15);
+        margin: 32px 0;
+    }
+    
+    .result-label {
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text-secondary);
+        margin-bottom: 8px;
     }
     
     .result-amount {
         font-family: 'Inter', sans-serif;
-        font-size: 48px;
+        font-size: 56px;
         font-weight: 800;
         color: var(--green);
+        line-height: 1;
     }
     
-    /* Footer */
-    .audit-footer {
+    .result-subtext {
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        color: var(--text-muted);
+        margin-top: 12px;
+    }
+    
+    /* ===== FOOTER ===== */
+    .brace-footer {
         text-align: center;
-        padding: 32px 0;
-        margin-top: 40px;
+        padding: 32px 24px;
         border-top: 1px solid var(--border);
+        background: var(--bg-white);
+    }
+    
+    .footer-text {
         font-family: 'Inter', sans-serif;
         font-size: 13px;
         color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+    
+    .footer-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    /* ===== PROGRESS INDICATOR ===== */
+    .progress-bar {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 32px;
+    }
+    
+    .progress-step {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .progress-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--border);
+    }
+    
+    .progress-dot.active {
+        background: var(--text);
+    }
+    
+    .progress-line {
+        width: 40px;
+        height: 2px;
+        background: var(--border);
+    }
+    
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 640px) {
+        .hero-title {
+            font-size: 28px;
+        }
+        
+        .hero-subtitle {
+            font-size: 15px;
+        }
+        
+        .trust-badges {
+            gap: 16px;
+        }
+        
+        .step-card {
+            padding: 20px;
+        }
+        
+        .result-amount {
+            font-size: 44px;
+        }
     }
 </style>
 """, unsafe_allow_html=True)
@@ -226,132 +458,191 @@ def verify_session():
     email = params.get("email", "")
     session = params.get("session_id", "")
     
-    # For now, we'll trust the redirect from Vercel
-    # In production, you'd verify the session_id with Stripe
     if email or session or os.getenv("BYPASS_PAYMENT") == "true":
         return True, email
     return False, None
 
 
 def show_upload_form(email: str = None):
-    """Display the file upload form."""
+    """Display the premium file upload form."""
     
     # Header
     st.markdown("""
-    <div class="audit-header">
-        <div class="audit-logo">Brace</div>
-        <h1 class="audit-title">Upload Your Data</h1>
-        <p class="audit-subtitle">We'll analyze everything and send your report within 48 hours.</p>
+    <div class="brace-header">
+        <div class="brace-logo">
+            <div class="brace-logo-icon">⚡</div>
+            Brace
+        </div>
+        <div class="header-badge">
+            <span>🔒</span> Secure Upload
+        </div>
     </div>
     """, unsafe_allow_html=True)
     
-    # Verification badge
+    # Hero Section
+    verified_html = ""
     if email:
-        st.markdown(f"""
-        <div class="verified-badge">
-            ✓ Payment verified for {email}
+        verified_html = f'<div class="hero-badge">✓ Payment verified for {email}</div>'
+    else:
+        verified_html = '<div class="hero-badge">⚡ Profit Leak Audit</div>'
+    
+    st.markdown(f"""
+    <div class="hero-section">
+        {verified_html}
+        <h1 class="hero-title">Upload Your Business Data</h1>
+        <p class="hero-subtitle">
+            We'll analyze your invoices, expenses, and quotes to find hidden profit leaks. 
+            Your personalized report will be ready within 48 hours.
+        </p>
+        <div class="trust-badges">
+            <div class="trust-badge">
+                <span>🔐</span> Bank-level encryption
+            </div>
+            <div class="trust-badge">
+                <span>🗑️</span> Deleted after 30 days
+            </div>
+            <div class="trust-badge">
+                <span>🇦🇺</span> Australian servers
+            </div>
         </div>
-        """, unsafe_allow_html=True)
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Form Container
+    st.markdown('<div class="form-container">', unsafe_allow_html=True)
+    
+    # Progress Bar
+    st.markdown("""
+    <div class="progress-bar">
+        <div class="progress-dot active"></div>
+        <div class="progress-line"></div>
+        <div class="progress-dot"></div>
+        <div class="progress-line"></div>
+        <div class="progress-dot"></div>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Step 1: Business Info
     st.markdown("""
-    <div class="form-card">
-        <div class="form-card-header">
-            <div class="form-card-num">1</div>
-            <div class="form-card-title">Your Business</div>
+    <div class="step-card">
+        <div class="step-header">
+            <div class="step-number">1</div>
+            <div class="step-info">
+                <div class="step-title">Your Business</div>
+                <div class="step-desc">Tell us about your trade business</div>
+            </div>
+            <div class="step-icon">🏢</div>
         </div>
     """, unsafe_allow_html=True)
     
     col1, col2 = st.columns(2)
     with col1:
-        business_name = st.text_input("Business name", placeholder="e.g. Dave's Electrical")
-        contact_email = st.text_input("Email", value=email or "", placeholder="dave@example.com")
+        business_name = st.text_input("Business Name *", placeholder="e.g. Dave's Electrical")
+        contact_email = st.text_input("Email Address *", value=email or "", placeholder="dave@example.com")
     with col2:
-        trade_type = st.selectbox("Trade", ["Electrician", "Plumber", "Carpenter", "HVAC", "Builder", "Landscaper", "Roofer", "Other"])
-        location = st.text_input("Location", placeholder="Sydney, NSW")
+        trade_type = st.selectbox("Your Trade *", ["Electrician", "Plumber", "Carpenter", "HVAC / Air Con", "Builder", "Landscaper", "Roofer", "Painter", "Other"])
+        location = st.text_input("Location *", placeholder="e.g. Sydney, NSW")
     
     st.markdown("</div>", unsafe_allow_html=True)
     
     # Step 2: Current Numbers
     st.markdown("""
-    <div class="form-card">
-        <div class="form-card-header">
-            <div class="form-card-num">2</div>
-            <div class="form-card-title">Current Numbers</div>
+    <div class="step-card">
+        <div class="step-header">
+            <div class="step-number">2</div>
+            <div class="step-info">
+                <div class="step-title">Current Numbers</div>
+                <div class="step-desc">Help us benchmark against similar tradies</div>
+            </div>
+            <div class="step-icon">📊</div>
         </div>
     """, unsafe_allow_html=True)
     
     col1, col2 = st.columns(2)
     with col1:
-        hourly_rate = st.number_input("Current hourly rate ($)", min_value=50, max_value=300, value=95)
-        revenue = st.selectbox("Annual revenue (approx)", 
-                              ["Under $100k", "$100k-$150k", "$150k-$200k", "$200k-$300k", "$300k-$500k", "$500k+"])
+        hourly_rate = st.number_input("Current Hourly Rate ($)", min_value=50, max_value=300, value=95, help="What you typically charge per hour")
+        revenue = st.selectbox("Annual Revenue (approx)", 
+                              ["Under $100k", "$100k - $150k", "$150k - $200k", "$200k - $300k", "$300k - $500k", "$500k+"],
+                              help="Rough estimate is fine")
     with col2:
-        hours_per_week = st.slider("Hours worked per week", 20, 80, 50)
-        call_out = st.number_input("Call-out fee ($)", min_value=0, max_value=200, value=0)
+        hours_per_week = st.slider("Hours Worked Per Week", 20, 80, 50)
+        call_out = st.number_input("Call-out Fee ($)", min_value=0, max_value=200, value=0, help="If you charge one")
     
     st.markdown("</div>", unsafe_allow_html=True)
     
     # Step 3: File Upload
     st.markdown("""
-    <div class="form-card">
-        <div class="form-card-header">
-            <div class="form-card-num">3</div>
-            <div class="form-card-title">Upload Documents</div>
+    <div class="step-card">
+        <div class="step-header">
+            <div class="step-number">3</div>
+            <div class="step-info">
+                <div class="step-title">Upload Documents</div>
+                <div class="step-desc">Last 12 months of business data</div>
+            </div>
+            <div class="step-icon">📁</div>
         </div>
-        <p style="font-family: 'Inter', sans-serif; font-size: 14px; color: #64748b; margin-bottom: 16px;">
-            Upload your invoices, expenses, and quotes from the last 12 months. 
-            We accept PDF, Excel, and CSV files.
-        </p>
+        <div class="upload-hint">
+            💡 <strong>Tip:</strong> The more data you provide, the more accurate your audit will be. 
+            We accept PDF, Excel (.xlsx), and CSV files.
+        </div>
     """, unsafe_allow_html=True)
     
     invoices = st.file_uploader(
-        "Invoices (required)", 
+        "📄 Invoices (required)", 
         type=['pdf', 'xlsx', 'xls', 'csv'], 
         accept_multiple_files=True, 
         key="inv",
         help="Your invoices from the last 12 months"
     )
     
+    if invoices:
+        st.markdown(f'<div class="file-success">✓ {len(invoices)} invoice file(s) ready</div>', unsafe_allow_html=True)
+    
     expenses = st.file_uploader(
-        "Expenses / Bank statements", 
+        "💳 Expenses / Bank Statements", 
         type=['pdf', 'xlsx', 'xls', 'csv'], 
         accept_multiple_files=True, 
         key="exp",
         help="Business expenses or bank statements"
     )
     
+    if expenses:
+        st.markdown(f'<div class="file-success">✓ {len(expenses)} expense file(s) ready</div>', unsafe_allow_html=True)
+    
     quotes = st.file_uploader(
-        "Quotes (optional)", 
+        "📝 Quotes (optional but recommended)", 
         type=['pdf', 'xlsx', 'xls', 'csv'], 
         accept_multiple_files=True, 
         key="quo",
         help="Quotes you've sent, including ones that didn't convert"
     )
     
-    if invoices:
-        st.success(f"✓ {len(invoices)} invoice file(s) uploaded")
-    if expenses:
-        st.success(f"✓ {len(expenses)} expense file(s) uploaded")
     if quotes:
-        st.success(f"✓ {len(quotes)} quote file(s) uploaded")
+        st.markdown(f'<div class="file-success">✓ {len(quotes)} quote file(s) ready</div>', unsafe_allow_html=True)
     
     st.markdown("</div>", unsafe_allow_html=True)
     
     # Submit Button
     st.markdown("<br>", unsafe_allow_html=True)
-    submitted = st.button("🚀 Run My Audit", use_container_width=True)
+    
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        submitted = st.button("🚀 Run My Profit Leak Audit", use_container_width=True)
     
     if submitted:
-        if not business_name or not contact_email:
-            st.error("Please fill in your business name and email.")
+        if not business_name:
+            st.error("Please enter your business name.")
+        elif not contact_email:
+            st.error("Please enter your email address.")
+        elif not location:
+            st.error("Please enter your location.")
         elif not invoices and not expenses:
             st.error("Please upload at least your invoices or bank statements.")
         else:
             run_audit(
                 business_name=business_name,
                 email=contact_email,
-                trade_type=trade_type.lower() if trade_type != "Other" else "trade",
+                trade_type=trade_type.lower().replace(" / ", "_").replace(" ", "_") if trade_type != "Other" else "trade",
                 location=location,
                 hourly_rate=hourly_rate,
                 hours_per_week=hours_per_week,
@@ -360,10 +651,22 @@ def show_upload_form(email: str = None):
                 quotes=quotes or []
             )
     
+    st.markdown("</div>", unsafe_allow_html=True)
+    
     # Footer
     st.markdown("""
-    <div class="audit-footer">
-        Powered by Brace · Your data is encrypted and deleted after 30 days
+    <div class="brace-footer">
+        <div class="footer-text">
+            <div class="footer-item">
+                <span>⚡</span> Powered by Brace
+            </div>
+            <div class="footer-item">
+                <span>🔒</span> Your data is encrypted
+            </div>
+            <div class="footer-item">
+                <span>🗑️</span> Deleted after 30 days
+            </div>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -378,7 +681,7 @@ def run_audit(business_name, email, trade_type, location, hourly_rate, hours_per
     with st.status("🔍 Running your profit leak audit...", expanded=True) as status:
         
         # Save files
-        st.write("📁 Saving your documents...")
+        st.write("📁 Saving your documents securely...")
         handler = FileHandler()
         folder = handler.create_customer_folder(business_name)
         
@@ -409,7 +712,7 @@ def run_audit(business_name, email, trade_type, location, hourly_rate, hours_per
         st.write(f"✓ Found {combined['summary']['total_transactions']} transactions")
         
         # Analyze
-        st.write("📊 Analyzing your business data...")
+        st.write("📊 Running 9-point analysis...")
         context = BusinessContext(
             trade_type=trade_type,
             location=location or "Sydney",
@@ -423,7 +726,7 @@ def run_audit(business_name, email, trade_type, location, hourly_rate, hours_per
         analysis = analyzer.analyze(combined, context)
         
         # Generate report
-        st.write("📄 Generating your professional report...")
+        st.write("📄 Generating your professional reports...")
         generator = ReportGenerator(output_dir="./output")
         report = generator.generate_report(analysis, context, business_name)
         
@@ -433,23 +736,17 @@ def run_audit(business_name, email, trade_type, location, hourly_rate, hours_per
     opportunity = analysis.guarantee_check.get('total_opportunity', 0)
     conservative = opportunity * 0.7
     
-    st.markdown("<br>", unsafe_allow_html=True)
-    
     st.markdown(f"""
     <div class="result-card">
-        <p style="font-family: 'Inter', sans-serif; font-size: 14px; color: #64748b; margin-bottom: 8px;">
-            Conservative Opportunity Identified
-        </p>
+        <div class="result-label">Conservative Opportunity Identified</div>
         <div class="result-amount">${conservative:,.0f}</div>
-        <p style="font-family: 'Inter', sans-serif; font-size: 13px; color: #94a3b8; margin-top: 8px;">
-            Best case: ${opportunity:,.0f}/year
-        </p>
+        <div class="result-subtext">Best case scenario: ${opportunity:,.0f}/year</div>
     </div>
     """, unsafe_allow_html=True)
     
+    # Download buttons
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # Download buttons
     col1, col2 = st.columns(2)
     with col1:
         if Path(report['html_report']).exists():
@@ -473,28 +770,37 @@ def run_audit(business_name, email, trade_type, location, hourly_rate, hours_per
     
     # Next steps
     st.markdown("""
-    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 24px; margin-top: 24px;">
-        <h3 style="font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 600; color: #0f172a; margin: 0 0 12px;">
-            📧 What happens next?
+    <div class="step-card" style="margin-top: 24px; border-left: 4px solid #10b981;">
+        <h3 style="font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 700; color: #0f172a; margin: 0 0 12px; display: flex; align-items: center; gap: 8px;">
+            <span>📧</span> What happens next?
         </h3>
-        <p style="font-family: 'Inter', sans-serif; font-size: 14px; color: #475569; line-height: 1.6; margin: 0;">
-            We've also sent these reports to your email. Check your inbox (and spam folder) 
+        <p style="font-family: 'Inter', sans-serif; font-size: 14px; color: #4b5563; line-height: 1.7; margin: 0;">
+            We've also sent these reports to <strong>{email}</strong>. Check your inbox (and spam folder) 
             within the next few minutes. If you have questions about implementing the action plan, 
-            reply to that email and we'll help.
+            just reply to that email and we'll help you out.
         </p>
     </div>
-    """, unsafe_allow_html=True)
+    """.format(email=email), unsafe_allow_html=True)
 
 
 def show_access_denied():
     """Show message when no valid payment session."""
     st.markdown("""
-    <div style="text-align: center; padding: 80px 20px;">
-        <div style="font-size: 64px; margin-bottom: 24px;">🔒</div>
-        <h2 style="font-family: 'Inter', sans-serif; font-size: 28px; font-weight: 700; color: #0f172a; margin: 0 0 12px;">
+    <div class="brace-header">
+        <div class="brace-logo">
+            <div class="brace-logo-icon">⚡</div>
+            Brace
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="text-align: center; padding: 100px 24px;">
+        <div style="font-size: 72px; margin-bottom: 24px;">🔒</div>
+        <h2 style="font-family: 'Inter', sans-serif; font-size: 32px; font-weight: 800; color: #0f172a; margin: 0 0 16px;">
             Access Required
         </h2>
-        <p style="font-family: 'Inter', sans-serif; font-size: 16px; color: #64748b; margin-bottom: 32px;">
+        <p style="font-family: 'Inter', sans-serif; font-size: 17px; color: #4b5563; margin-bottom: 40px; max-width: 400px; margin-left: auto; margin-right: auto; line-height: 1.6;">
             Please complete your purchase on the Brace website to access the audit form.
         </p>
     </div>
@@ -502,7 +808,7 @@ def show_access_denied():
     
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        st.link_button("Go to Brace →", "https://brace.vercel.app", use_container_width=True)
+        st.link_button("Go to Brace Website →", "https://brace-rvnk.vercel.app", use_container_width=True)
 
 
 def main():
