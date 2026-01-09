@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Audit - {{ customer_name }}</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+        :root {
+            --bg: #fafafa;
+            --surface: #ffffff;
+            --border: #e5e5e5;
+            --text: #171717;
+            --text-muted: #737373;
+            --accent: #ea580c;
+            --success: #16a34a;
+            --warning: #ca8a04;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans', -apple-system, sans-serif;
+            line-height: 1.7;
+            color: var(--text);
+            background: var(--bg);
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 60px 40px;
+        }
+
+        /* Header */
+        header {
+            border-bottom: 3px solid var(--text);
+            padding-bottom: 40px;
+            margin-bottom: 50px;
+        }
+
+        .report-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        header .date {
+            color: var(--text-muted);
+        }
+
+        /* Summary Box */
+        .summary-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 40px;
+            margin-bottom: 50px;
+            white-space: pre-line;
+        }
+
+        .summary-box h2 {
+            font-size: 14px;
+            font-family: 'IBM Plex Mono', monospace;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .summary-content {
+            font-size: 17px;
+            line-height: 1.8;
+        }
+
+        /* THE HERO - Money Dashboard */
+        .profit-leak-dashboard {
+            background: linear-gradient(135deg, #171717 0%, #262626 100%);
+            color: white;
+            padding: 40px;
+            margin-bottom: 40px;
+            border-radius: 8px;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .dashboard-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .dashboard-header h2 {
+            color: white;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .dashboard-header p {
+            color: rgba(255,255,255,0.7);
+            font-size: 16px;
+        }
+
+        .leak-breakdown {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .leak-item {
+            margin-bottom: 16px;
+        }
+
+        .leak-bar {
+            background: linear-gradient(90deg, #22c55e 0%, #16a34a var(--width, 60%), #374151 var(--width, 60%));
+            padding: 16px 20px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .leak-bar.callout {
+            background: linear-gradient(90deg, #eab308 0%, #ca8a04 var(--width, 40%), #374151 var(--width, 40%));
+        }
+
+        .leak-bar.quote {
+            background: linear-gradient(90deg, #3b82f6 0%, #2563eb var(--width, 30%), #374151 var(--width, 30%));
+        }
+
+        .leak-label {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .leak-amount {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .leak-total {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 2px solid rgba(255,255,255,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 16px;
+        }
+
+        .leak-total .total-amount {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 32px;
+            font-weight: 700;
+            color: #22c55e;
+        }
+
+        /* Rate Comparison Visual */
+        .rate-comparison {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+
+        .rate-comparison h3 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+
+        .rate-scale {
+            position: relative;
+            height: 120px;
+            margin: 0 40px;
+        }
+
+        .rate-bar {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            height: 12px;
+            background: linear-gradient(90deg, #dc2626 0%, #eab308 35%, #22c55e 65%, #16a34a 100%);
+            border-radius: 6px;
+        }
+
+        .rate-marker {
+            position: absolute;
+            bottom: 45px;
+            left: var(--position, 50%);
+            transform: translateX(-50%);
+        }
+
+        .rate-marker::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+        }
+
+        .rate-marker.your-rate::after {
+            border-top: 12px solid #dc2626;
+        }
+
+        .rate-marker.market-avg::after {
+            border-top: 12px solid #22c55e;
+        }
+
+        .marker-label {
+            background: var(--text);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-family: 'IBM Plex Mono', monospace;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .rate-marker.your-rate .marker-label {
+            background: #dc2626;
+        }
+
+        .rate-marker.market-avg .marker-label {
+            background: #16a34a;
+        }
+
+        .rate-labels {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-muted);
+            font-family: 'IBM Plex Mono', monospace;
+        }
+
+        .rate-verdict {
+            text-align: center;
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 15px;
+        }
+
+        .rate-verdict.below {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+        }
+
+        .rate-verdict.above {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #16a34a;
+        }
+
+        /* Sections */
+        section {
+            margin-bottom: 50px;
+        }
+
+        section h2 {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 24px 0 12px;
+        }
+
+        /* Action Cards */
+        .action-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 30px;
+            margin-bottom: 24px;
+        }
+
+        .action-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .action-number {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            color: var(--accent);
+        }
+
+        .action-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .action-impact {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        .action-meta {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+
+        .action-meta span {
+            background: #f5f5f5;
+            padding: 4px 12px;
+            border-radius: 2px;
+        }
+
+        .action-body {
+            margin-top: 16px;
+        }
+
+        .action-body h4 {
+            font-size: 13px;
+            font-family: 'IBM Plex Mono', monospace;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin: 20px 0 8px;
+        }
+
+        .action-body p {
+            font-size: 15px;
+            margin-bottom: 8px;
+        }
+
+        .script-box {
+            background: #f8f8f8;
+            border: 1px solid var(--border);
+            padding: 16px 20px;
+            font-size: 14px;
+            font-style: italic;
+            margin: 12px 0;
+            line-height: 1.6;
+        }
+
+        .calculation {
+            background: #f5f5f5;
+            border-left: 3px solid var(--accent);
+            padding: 16px 20px;
+            margin: 12px 0;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+        }
+
+        /* 90-Day Timeline */
+        .timeline {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 30px;
+            margin: 40px 0;
+        }
+
+        .timeline h3 {
+            margin-bottom: 24px;
+        }
+
+        .timeline-track {
+            display: flex;
+            gap: 0;
+            margin-bottom: 20px;
+        }
+
+        .timeline-phase {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .timeline-phase::after {
+            content: '→';
+            position: absolute;
+            right: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            color: var(--text-muted);
+        }
+
+        .timeline-phase:last-child::after {
+            display: none;
+        }
+
+        .timeline-phase.week1 { background: #dcfce7; }
+        .timeline-phase.month1 { background: #fef3c7; }
+        .timeline-phase.quarter1 { background: #dbeafe; }
+
+        .phase-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .phase-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .phase-impact {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        /* Customer Lists */
+        .customer-verdict {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin: 30px 0;
+        }
+
+        .customer-box {
+            padding: 24px;
+            border-radius: 4px;
+        }
+
+        .customer-box.keep {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+        }
+
+        .customer-box.fire {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+        }
+
+        .customer-box h4 {
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .customer-box.keep h4 { color: #16a34a; }
+        .customer-box.fire h4 { color: #dc2626; }
+
+        .customer-item {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            font-size: 14px;
+        }
+
+        .customer-item:last-child {
+            border-bottom: none;
+        }
+
+        .customer-name {
+            font-weight: 600;
+        }
+
+        .customer-stats {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Worst Jobs */
+        .worst-jobs {
+            background: #fef2f2;
+            border: 2px solid #fecaca;
+            padding: 24px;
+            margin: 30px 0;
+        }
+
+        .worst-jobs h3 {
+            color: #dc2626;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .job-item {
+            background: white;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-radius: 4px;
+        }
+
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .job-title {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .job-loss {
+            color: #dc2626;
+            font-weight: 700;
+            font-family: 'IBM Plex Mono', monospace;
+        }
+
+        .job-details {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .job-lesson {
+            font-size: 14px;
+            padding: 12px;
+            background: #fffbeb;
+            border-left: 3px solid #eab308;
+            margin-top: 8px;
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Next Steps Box */
+        .next-steps-box {
+            background: var(--text);
+            color: white;
+            padding: 40px;
+            margin: 50px 0;
+        }
+
+        .next-steps-box h2 {
+            border: none;
+            color: white;
+            margin-bottom: 24px;
+        }
+
+        .next-steps-box ol {
+            padding-left: 24px;
+            line-height: 2;
+            font-size: 16px;
+        }
+
+        .next-steps-box strong {
+            color: #22c55e;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border);
+            padding-top: 30px;
+            margin-top: 50px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .report-id {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            margin-bottom: 20px;
+        }
+
+        @media print {
+            .container { max-width: 100%; padding: 20px; }
+            .action-card { break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="report-label">Business Audit Report</div>
+            <h1>{{ customer_name }}</h1>
+            <div class="date">{{ date }} · {{ context.trade_type | capitalize }} · {{ context.location }}</div>
+        </header>
+
+        <div class="summary-box">
+            <h2>Executive Summary</h2>
+            <div class="summary-content">{{ exec_summary }}</div>
+        </div>
+
+        <!-- HERO DASHBOARD -->
+        <div class="profit-leak-dashboard">
+            <div class="dashboard-header">
+                <div class="dashboard-icon">💰</div>
+                <h2>Money Left on the Table</h2>
+                <p>Here's exactly where your profit is leaking</p>
+            </div>
+            <div class="leak-breakdown">
+                {% set rate_gap = ((pricing.market_mid or (context.current_rate + 20)) - context.current_rate) * ((summary.total_revenue_analyzed or 100000) / (context.current_rate or 95)) * 0.85 %}
+                {% set callout_gap = (pricing.call_out_impact or 3000) * 0.7 %}
+                {% set quote_gap = (guarantee.quick_wins_total or 5000) * 0.3 %}
+                {% set total_gap = rate_gap + callout_gap + quote_gap %}
+
+                <div class="leak-item">
+                    <div class="leak-bar" style="--width: {{ ((rate_gap / (total_gap or 1)) * 100) | int }}%">
+                        <span class="leak-label">Undercharging vs Market</span>
+                        <span class="leak-amount">+${{ "{:,.0f}".format(rate_gap) }}/yr</span>
+                    </div>
+                </div>
+                <div class="leak-item">
+                    <div class="leak-bar callout" style="--width: {{ ((callout_gap / (total_gap or 1)) * 100) | int }}%">
+                        <span class="leak-label">Missing Call-out Fees</span>
+                        <span class="leak-amount">+${{ "{:,.0f}".format(callout_gap) }}/yr</span>
+                    </div>
+                </div>
+                <div class="leak-item">
+                    <div class="leak-bar quote" style="--width: {{ ((quote_gap / (total_gap or 1)) * 100) | int }}%">
+                        <span class="leak-label">Quote/Efficiency Gaps</span>
+                        <span class="leak-amount">+${{ "{:,.0f}".format(quote_gap) }}/yr</span>
+                    </div>
+                </div>
+                <div class="leak-total">
+                    <span>TOTAL OPPORTUNITY</span>
+                    <span class="total-amount">${{ "{:,.0f}".format(guarantee.total_conservative or (guarantee.total_opportunity or 15000) * 0.7) }}/yr</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- RATE COMPARISON VISUAL -->
+        <div class="rate-comparison">
+            <h3>Where You Sit in the Market</h3>
+            <div class="rate-scale">
+                <div class="rate-marker your-rate" style="--position: {{ (((context.current_rate - (pricing.market_low or 80)) / ((pricing.market_high or 160) - (pricing.market_low or 80))) * 100) | int }}%">
+                    <div class="marker-label">YOU<br>${{ context.current_rate }}/hr</div>
+                </div>
+                <div class="rate-marker market-avg" style="--position: {{ (((pricing.market_mid or 115) - (pricing.market_low or 80)) / ((pricing.market_high or 160) - (pricing.market_low or 80))) * 100 | int }}%">
+                    <div class="marker-label">MARKET AVG<br>${{ pricing.market_mid or (context.current_rate + 20) }}/hr</div>
+                </div>
+                <div class="rate-bar"></div>
+                <div class="rate-labels">
+                    <span>Bottom 25%<br>${{ pricing.market_low or (context.current_rate - 15) }}</span>
+                    <span>Top 10%<br>${{ pricing.market_high or (context.current_rate + 50) }}</span>
+                </div>
+            </div>
+            {% if context.current_rate < (pricing.market_mid or 115) %}
+            <div class="rate-verdict below">
+                ⚠️ You're charging <strong>{{ (((pricing.market_mid or 115) - context.current_rate) / (pricing.market_mid or 115) * 100) | round(0) | int }}% below</strong> market average
+            </div>
+            {% else %}
+            <div class="rate-verdict above">
+                ✓ You're at or above market average - focus on efficiency gains
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- ACTION PLAN (Top 5-8 only) -->
+        <section>
+            <h2>Your Action Plan</h2>
+            <p>Prioritized by impact. Each action shows the math, exact scripts, and what could go wrong.</p>
+
+            {% for action in action_plan[:8] %}
+            <div class="action-card">
+                <div class="action-header">
+                    <div>
+                        <div class="action-number">Action {{ loop.index }}</div>
+                        <div class="action-title">{{ action.action }}</div>
+                    </div>
+                    <div class="action-impact">+${{ "{:,.0f}".format((action.impact_conservative or action.impact_annual or 0) * 0.85) }}/yr</div>
+                </div>
+
+                <div class="action-meta">
+                    <span>⚙️ {{ action.effort }}</span>
+                    <span>⏱️ {{ action.timeline }}</span>
+                </div>
+
+                <div class="action-body">
+                    {% if action.calculation %}
+                    <div class="calculation">{{ action.calculation }}</div>
+                    {% endif %}
+
+                    {% if action.how %}
+                    <h4>How to implement</h4>
+                    <p>{{ action.how }}</p>
+                    {% endif %}
+
+                    {% if action.script %}
+                    <h4>Exact script</h4>
+                    <div class="script-box">"{{ action.script }}"</div>
+                    {% endif %}
+
+                    {% if action.pushback_response %}
+                    <h4>If they push back</h4>
+                    <div class="script-box">"{{ action.pushback_response }}"</div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </section>
+
+        <!-- 90-DAY TIMELINE -->
+        <div class="timeline">
+            <h3>📅 Your 90-Day Implementation Timeline</h3>
+            <div class="timeline-track">
+                <div class="timeline-phase week1">
+                    <div class="phase-label">Week 1-2</div>
+                    <div class="phase-title">Quick Wins</div>
+                    <div class="phase-impact">+${{ "{:,.0f}".format((guarantee.quick_wins_total or 5000) * 0.3) }}</div>
+                    <div style="font-size: 12px; margin-top: 8px; color: var(--text-muted);">
+                        Update rates<br>Add call-out fee
+                    </div>
+                </div>
+                <div class="timeline-phase month1">
+                    <div class="phase-label">Week 3-6</div>
+                    <div class="phase-title">Build Momentum</div>
+                    <div class="phase-impact">+${{ "{:,.0f}".format((guarantee.quick_wins_total or 5000) * 0.4) }}</div>
+                    <div style="font-size: 12px; margin-top: 8px; color: var(--text-muted);">
+                        Review customers<br>Optimize jobs
+                    </div>
+                </div>
+                <div class="timeline-phase quarter1">
+                    <div class="phase-label">Week 7-12</div>
+                    <div class="phase-title">Lock It In</div>
+                    <div class="phase-impact">+${{ "{:,.0f}".format((guarantee.quick_wins_total or 5000) * 0.3) }}</div>
+                    <div style="font-size: 12px; margin-top: 8px; color: var(--text-muted);">
+                        Refine systems<br>Track results
+                    </div>
+                </div>
+            </div>
+            <div style="text-align: center; padding: 16px; background: #f5f5f5; border-radius: 4px;">
+                <strong>90-Day Target:</strong>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 20px; color: var(--success); margin-left: 8px;">
+                    ${{ "{:,.0f}".format(guarantee.quick_wins_total or (guarantee.total_conservative or 15000) * 0.4) }}
+                </span>
+                <span style="color: var(--text-muted); font-size: 14px;"> additional revenue</span>
+            </div>
+        </div>
+
+        <!-- CUSTOMER ANALYSIS -->
+        {% if customer_analysis and customer_analysis.top_customers %}
+        <section>
+            <h2>Customer Analysis: Keep vs Fire</h2>
+            <p>Who's worth your time - and who isn't.</p>
+
+            <div class="customer-verdict">
+                <div class="customer-box keep">
+                    <h4>✅ Your Best Customers</h4>
+                    {% for cust in customer_analysis.top_customers[:3] if cust.grade in ['A', 'B'] %}
+                    <div class="customer-item">
+                        <div class="customer-name">{{ cust.name or cust.customer or 'Top Customer' }}</div>
+                        <div class="customer-stats">${{ "{:,.0f}".format(cust.total_revenue or cust.revenue or 0) }}/yr · {{ cust.job_count or cust.jobs or 0 }} jobs · Grade {{ cust.grade or 'A' }}</div>
+                    </div>
+                    {% endfor %}
+                    <div style="margin-top: 16px; font-size: 13px; color: #16a34a;">
+                        <strong>Action:</strong> Nurture these relationships. Priority scheduling, quarterly check-ins, ask for referrals.
+                    </div>
+                </div>
+                <div class="customer-box fire">
+                    <h4>⚠️ Consider Dropping</h4>
+                    {% if customer_analysis.concerning_customers %}
+                    {% for cust in customer_analysis.concerning_customers[:3] %}
+                    <div class="customer-item">
+                        <div class="customer-name">{{ cust.name or 'Problem Customer' }}</div>
+                        <div class="customer-stats">{{ cust.reason or 'Low margin, high effort' }}</div>
+                    </div>
+                    {% endfor %}
+                    <div style="margin-top: 16px; font-size: 13px; color: #dc2626;">
+                        <strong>Action:</strong> Politely decline next job or quote premium to make it worth your time.
+                    </div>
+                    {% else %}
+                    <div class="customer-item">
+                        <div class="customer-stats">No major problem customers identified - you're doing well!</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- WORST JOBS -->
+        {% if worst_jobs %}
+        <div class="worst-jobs">
+            <h3>🚨 Your Worst Performing Jobs</h3>
+            <p style="margin-bottom: 16px; font-size: 14px;">These jobs lost money or made very little. Learn from them.</p>
+
+            {% for job in worst_jobs[:3] %}
+            <div class="job-item">
+                <div class="job-header">
+                    <div class="job-title">{{ job.job_description or 'Job Details' }}</div>
+                    <div class="job-loss">{{ job.profit_loss or 0 | round(0) | int }}% margin</div>
+                </div>
+                <div class="job-details">
+                    Customer: {{ job.customer or 'Unknown' }} ·
+                    Revenue: ${{ "{:,.0f}".format(job.revenue or 0) }} ·
+                    Cost: ${{ "{:,.0f}".format(job.estimated_cost or 0) }}
+                </div>
+                <div class="job-lesson">
+                    <strong>Why it sucked:</strong> {{ job.why_bad or 'Low margin, underquoted, or took too long' }}
+                </div>
+            </div>
+            {% endfor %}
+
+            <div style="margin-top: 16px; padding: 12px; background: white; border-left: 3px solid #dc2626; font-size: 14px;">
+                <strong>💡 Key Takeaway:</strong> Stop accepting jobs like these. Set minimum job sizes or charge premium for small work.
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- JOB PROFITABILITY TABLE -->
+        {% if job_analysis %}
+        <section>
+            <h2>Job Profitability: What Makes Money</h2>
+            <p>Which types of work are actually profitable - and which aren't.</p>
+
+            <table>
+                <tr>
+                    <th>Job Type</th>
+                    <th>Count</th>
+                    <th>Revenue</th>
+                    <th>Avg Job</th>
+                    <th>Eff. Rate</th>
+                    <th>Verdict</th>
+                </tr>
+                {% for job in job_analysis[:6] %}
+                <tr>
+                    <td>{{ job.category or 'Unknown' }}</td>
+                    <td>{{ job.job_count or 0 }}</td>
+                    <td>${{ "{:,.0f}".format(job.total_revenue or 0) }}</td>
+                    <td>${{ "{:,.0f}".format(job.avg_revenue or 0) }}</td>
+                    <td style="font-weight: 600; font-family: 'IBM Plex Mono', monospace;">${{ "{:,.0f}".format(job.effective_rate or 0) }}/hr</td>
+                    <td style="font-weight: 600; color: {% if job.verdict == 'highly_profitable' or job.verdict == 'profitable' %}var(--success){% elif job.verdict == 'marginal' %}var(--warning){% else %}#dc2626{% endif %};">
+                        {% if job.verdict == 'highly_profitable' or job.verdict == 'profitable' %}✅ Good
+                        {% elif job.verdict == 'marginal' %}⚠️ Marginal
+                        {% else %}❌ Poor{% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+
+            <div style="margin-top: 16px; padding: 12px; background: #fffbeb; border-left: 3px solid #eab308; font-size: 14px;">
+                <strong>Action:</strong> Double down on your high-margin work. Decline or upcharge low-margin jobs.
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- NEXT STEPS -->
+        <div class="next-steps-box">
+            <h2>What To Do Now</h2>
+            <ol>
+                <li><strong>This week:</strong> Implement Action #1 and #2 from the plan above</li>
+                <li><strong>Use the Excel tracker:</strong> Log what you've done and track results</li>
+                <li><strong>Strategy call:</strong> Book your 30-min Q&A to discuss specific questions</li>
+                <li><strong>30-day check-in:</strong> Review what's working and adjust</li>
+            </ol>
+        </div>
+
+        <footer>
+            <div class="report-id">
+                Report ID: BRC-{{ context.location[:3] | upper }}-{{ context.trade_type[:4] | upper }}-{{ date | replace(' ', '') | replace(',', '') }}
+            </div>
+            <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">BRACE</div>
+            <p>AI-Powered Business Intelligence for Australian Tradies</p>
+            <p style="margin-top: 16px; font-size: 12px;">
+                Questions? Email: support@brace.com.au
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

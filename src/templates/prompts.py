@@ -8,6 +8,7 @@ QUALITY PRINCIPLES:
 3. Make it SPECIFIC to their situation - not generic advice
 4. Include REALISTIC assumptions - not best-case scenarios
 5. Prioritize ACTIONABLE over impressive numbers
+6. Reference PROVEN FRAMEWORKS and REAL CASE STUDIES - not generic advice
 
 2026 BUSINESS REALITY FOR TRADIES:
 - Rising costs (fuel, insurance, materials up 15-25% since 2023)
@@ -16,6 +17,10 @@ QUALITY PRINCIPLES:
 - Cash flow is king - payment terms matter more than ever
 - Customers expect instant quotes and communication
 - Specialization beats generalization
+
+FRAMEWORKS AVAILABLE:
+- growth_frameworks.py: Proven pricing, lead gen, operations, growth tactics
+- case_studies.py: Real anonymized case studies showing what works
 """
 
 DATA_EXTRACTION_PROMPT = """You are a financial data extraction specialist for Australian tradie businesses.
@@ -195,7 +200,126 @@ ANALYZE:
 
 CRITICAL: The client told us exactly what's bothering them. Your recommendations MUST address their stated frustration first. Then add what the data reveals.
 """
-    
+
+    # Load proven frameworks to inject into prompt
+    from src.templates.growth_frameworks import (
+        PRICING_TRANSITION_FRAMEWORK,
+        CALL_OUT_FEE_FRAMEWORK,
+        REVIEW_ACQUISITION_FRAMEWORK,
+        LEAD_RESPONSE_FRAMEWORK,
+        CUSTOMER_GRADING_FRAMEWORK,
+        PAYMENT_TERMS_FRAMEWORK
+    )
+    from src.templates.case_studies import format_case_study_for_prompt, get_relevant_case_studies
+
+    # Get relevant case studies based on trade
+    relevant_cases = get_relevant_case_studies(trade=trade_type)
+    case_examples = "\n\n".join([
+        format_case_study_for_prompt(case.get("key", ""), sections=["situation", "results", "lessons"])
+        for case in relevant_cases[:2]  # Include 2 most relevant
+    ]) if relevant_cases else ""
+
+    frameworks_section = f"""
+## PROVEN FRAMEWORKS TO REFERENCE IN YOUR ANALYSIS
+
+These are battle-tested strategies from real tradie businesses. Reference these SPECIFICALLY in your recommendations.
+
+### PRICING TRANSITION FRAMEWORK
+When recommending rate increases, use this proven 4-step system:
+1. Update quote templates immediately (new customers get new rate from day 1)
+2. Notify A-grade customers 60 days in advance (personal email/text)
+3. Notify B-grade customers 30 days in advance
+4. C-grade customers - update on next quote only (okay if they leave)
+
+Expected results: 10-15% customer loss (mostly low-margin C-grade).
+A-grade retention: 95%+, B-grade: 85-90%, C-grade: 60-70%
+
+Script for existing customers:
+"Hi [Name], just wanted to let you know our rates are moving to $[NEW_RATE]/hr from [date]. This brings us in line with current market rates and ensures we can keep delivering the quality you expect. Happy to chat if you have any questions."
+
+Objection handling:
+"Too expensive" → "I understand - rates have definitely increased across the board. This brings us to mid-market for {trade_type} in {location}. Our rate reflects [years] experience, full licensing and insurance, and our guarantee to get it right first time."
+
+### CALL-OUT FEE FRAMEWORK
+Only ~60% of tradies charge call-out fees - leaving $3-8k/year on table.
+
+Standard structure:
+- Standard hours: $95-$130 (waived if job booked)
+- After-hours: $150-$200 (always charged)
+- Emergency: $200-$350 (always charged)
+
+Script: "Our call-out fee is $[AMOUNT] which covers travel and on-site assessment. If you go ahead with the work, we'll credit that toward the job cost. Sound fair?"
+
+Customer acceptance: 85%+ accept without question when stated confidently.
+
+Calculation: Call-outs per week × 48 weeks × Fee × 85% acceptance
+
+### REVIEW ACQUISITION FRAMEWORK
+Critical facts:
+- 76% of tradies have <10 Google reviews
+- They're losing 40-60% of Google search leads to competitors with 25+ reviews
+- Day 3 SMS has 15-22% response rate (vs 5-8% for Day 7 email)
+
+Proven system:
+Send SMS on Day 3 after job completion with direct Google review link:
+"Hey [FIRST_NAME], thanks again for letting us [SPECIFIC_THING]. If you're happy with the job, a quick Google review really helps us out: [LINK]. Cheers, [NAME]"
+
+Why Day 3: Not too soon (Day 1), not forgotten (Day 7+). Sweet spot for satisfaction + memory.
+
+Impact: Going from <10 reviews to 25+ reviews = 3-5 additional jobs per month.
+
+### LEAD RESPONSE SPEED FRAMEWORK
+Research data (Hipages + ServiceM8):
+- Under 2 hours: 21% conversion
+- 2-24 hours: 14% conversion
+- 24-48 hours: 9% conversion
+- Over 48 hours: 5% conversion
+
+First responder wins 60% of the time in competitive markets.
+
+System:
+1. Respond within 30 minutes (text or call, not email)
+2. Site visit same/next day
+3. Quote within 24 hours of site visit
+4. Follow-up: Day 1 (quote sent + call), Day 3 (text), Day 7 (final call)
+
+### CUSTOMER GRADING FRAMEWORK (A/B/C/Fire)
+Grade customers quarterly to focus energy on profitable relationships:
+
+A-grade (nurture actively):
+- High revenue (top 20%)
+- Repeat business (3+ jobs/year)
+- Pays fast (<7 days)
+- Refers others
+Action: Priority scheduling, quarterly check-ins, maintain/slight discount for loyalty
+
+B-grade (maintain):
+- Decent revenue, occasional repeat, pays normally (7-14 days)
+Action: Good service, standard rates
+
+C-grade (deprioritize):
+- Low revenue (<$500/year), one-off, slow pay (14-30 days), high effort
+Action: Fit around better work, consider minimums, full rate + call-out OR decline
+
+Fire (terminate professionally):
+- Chronic slow/no payment (>30 days), abusive, constant scope creep, jobs lose money
+Action: Politely decline next request
+
+### PAYMENT TERMS FRAMEWORK
+Optimal structure to fix cash flow:
+- Under $1,000: Full payment on completion
+- $1,000-$5,000: 50% deposit, 50% on completion
+- Over $5,000: 30% deposit, 40% at midpoint, 30% completion
+
+Late payment sequence:
+- Day 7: Friendly text reminder
+- Day 14: Phone call (assume good intent, ask if issue)
+- Day 21: Formal email + final notice
+- Day 30: Collections or write-off decision
+
+{case_examples}
+"""
+
     return f"""You are an elite business analyst producing a PROFESSIONAL AUDIT REPORT for an Australian tradie.
 This is a $797 paid audit - it must feel like a $3,000 consulting engagement.
 
@@ -215,6 +339,8 @@ CRITICAL: This is NOT an AI summary. This is a PROFESSIONAL AUDIT with:
 {benchmark_section}
 
 {context_section}
+
+{frameworks_section}
 
 AUDIT QUALITY STANDARDS:
 1. Reference specific transactions: "Invoice #X to Customer Y for $Z shows..."

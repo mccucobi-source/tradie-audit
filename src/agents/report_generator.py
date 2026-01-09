@@ -182,8 +182,15 @@ These numbers assume you actually implement the changes. They won't happen by th
         output_dir: Path
     ) -> Path:
         """Generate HTML report with evidence and calculations shown."""
-        
-        html_template = """
+
+        # Use streamlined template
+        template_path = Path(__file__).parent.parent / "templates" / "streamlined_report_template.html"
+        if template_path.exists():
+            with open(template_path, 'r') as f:
+                html_template = f.read()
+        else:
+            # Fallback to inline template
+            html_template = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
