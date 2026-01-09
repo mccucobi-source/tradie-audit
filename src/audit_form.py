@@ -15,7 +15,7 @@ sys.path.insert(0, str(project_root))
 import streamlit as st
 
 st.set_page_config(
-    page_title="Brace | Business Growth Audit",
+    page_title="Brace | Profit Analysis",
     page_icon="⚡",
     layout="centered",
     initial_sidebar_state="collapsed"
@@ -518,7 +518,7 @@ def show_onboarding(email: str = None):
     
     # Header
     st.markdown('<div class="header">', unsafe_allow_html=True)
-    st.markdown('<div class="brand">Brace Growth Audit</div>', unsafe_allow_html=True)
+    st.markdown('<div class="brand">Brace Profit Analysis</div>', unsafe_allow_html=True)
     st.markdown(f'<div class="step-indicator">Step {step} of {TOTAL_STEPS}</div>', unsafe_allow_html=True)
     st.markdown(render_progress(step), unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
@@ -808,7 +808,7 @@ def show_onboarding(email: str = None):
                 prev_step()
                 st.rerun()
         with col2:
-            if st.button("Run Growth Audit", key="run"):
+            if st.button("Analyze My Business", key="run"):
                 if files:
                     data['files'] = files
                     data['additional_notes'] = notes
