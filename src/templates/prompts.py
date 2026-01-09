@@ -93,8 +93,9 @@ RULES:
 def get_analysis_prompt(data_summary: str, trade_type: str, location: str, 
                         years_in_business: int, current_rate: float, 
                         hours_per_week: int, revenue_goal: float,
-                        market_benchmarks: dict = None) -> str:
-    """Generate the comprehensive 2026 analysis prompt with market benchmarks."""
+                        market_benchmarks: dict = None,
+                        business_context: dict = None) -> str:
+    """Generate the comprehensive 2026 Growth Audit prompt with all context."""
     
     # Format benchmark data for inclusion in prompt
     benchmark_section = ""
@@ -120,6 +121,81 @@ Confidence Level: {hourly.get('confidence', 'MEDIUM')}
 USE THESE EXACT BENCHMARKS IN YOUR ANALYSIS. Cite them explicitly.
 """
     
+    # Build comprehensive context from onboarding data
+    context_section = ""
+    if business_context:
+        # Lead generation context
+        lead_sources = business_context.get('lead_sources', [])
+        leads_per_week = business_context.get('leads_per_week', 'Unknown')
+        close_rate = business_context.get('close_rate', 0)
+        google_rating = business_context.get('google_rating', 'Unknown')
+        google_reviews = business_context.get('google_reviews', '0')
+        
+        # Quoting context
+        quote_method = business_context.get('quote_method', 'Unknown')
+        quote_time = business_context.get('quote_time', 'Unknown')
+        quotes_per_month = business_context.get('quotes_per_month', 'Unknown')
+        quote_speed = business_context.get('quote_speed', 'Unknown')
+        
+        # Operations context
+        tools_used = business_context.get('tools_used', [])
+        job_tracking = business_context.get('job_tracking', 'Unknown')
+        follow_up_method = business_context.get('follow_up_method', 'Unknown')
+        biggest_time_waste = business_context.get('biggest_time_waste', 'Unknown')
+        
+        # Goals context
+        hiring_plans = business_context.get('hiring_plans', 'Unknown')
+        biggest_frustration = business_context.get('biggest_frustration', '')
+        magic_wand = business_context.get('magic_wand', '')
+        
+        context_section = f"""
+## DETAILED BUSINESS CONTEXT FROM INTAKE INTERVIEW
+
+### LEAD GENERATION & MARKETING
+- Lead sources: {', '.join(lead_sources) if lead_sources else 'Not specified'}
+- Leads per week: {leads_per_week}
+- Quote-to-job conversion rate: {close_rate}%
+- Google Business rating: {google_rating}
+- Number of Google reviews: {google_reviews}
+
+ANALYZE: 
+- If conversion rate < 35%, there's a quoting or pricing problem
+- If conversion rate > 50%, they may be underpricing
+- Google presence is critical in 2026 - less than 20 reviews = invisible online
+- Relying on word-of-mouth only = growth ceiling
+
+### QUOTING PROCESS
+- How they create quotes: {quote_method}
+- Time per quote: {quote_time}
+- Quotes sent per month: {quotes_per_month}
+- Speed to quote: {quote_speed}
+
+ANALYZE:
+- "Mental math + text" = inconsistent pricing, leaving money on table
+- Anything over 30 min per quote = major admin burden
+- Slower than "same day" response = losing jobs to faster competitors
+- Track: (Quotes × Time per quote × Hourly rate) = true cost of quoting
+
+### CURRENT TOOLS & SYSTEMS
+- Software used: {', '.join(tools_used) if tools_used else 'None / Paper'}
+- Job tracking method: {job_tracking}
+- Lead follow-up method: {follow_up_method}
+- Biggest time waste: {biggest_time_waste}
+
+ANALYZE:
+- "Paper / manual" + "In my head" = operational risk + admin burden
+- No job management software = missing data for optimization
+- "{follow_up_method}" follow-up approach = {"MAJOR LEAK - losing 30-40% of potential jobs" if "don't" in follow_up_method.lower() else "needs optimization"}
+- They said "{biggest_time_waste}" is their biggest time waste - address this DIRECTLY in recommendations
+
+### GOALS & PAIN POINTS
+- Team plans: {hiring_plans}
+- Their biggest frustration (in their words): "{biggest_frustration}"
+- If they had a magic wand: "{magic_wand}"
+
+CRITICAL: The client told us exactly what's bothering them. Your recommendations MUST address their stated frustration first. Then add what the data reveals.
+"""
+    
     return f"""You are an elite business analyst producing a PROFESSIONAL AUDIT REPORT for an Australian tradie.
 This is a $797 paid audit - it must feel like a $3,000 consulting engagement.
 
@@ -137,6 +213,8 @@ CRITICAL: This is NOT an AI summary. This is a PROFESSIONAL AUDIT with:
 - Risk analysis for every recommendation
 
 {benchmark_section}
+
+{context_section}
 
 AUDIT QUALITY STANDARDS:
 1. Reference specific transactions: "Invoice #X to Customer Y for $Z shows..."
@@ -292,7 +370,79 @@ Based on their data, identify:
 - Geographic expansion: Are they traveling too far for small jobs?
 - Digital presence: Do they have Google reviews? (Can't tell from data, but recommend)
 
-## 9. REALISTIC 90-DAY ACTION PLAN
+## 9. ONLINE PRESENCE ASSESSMENT
+
+Based on their stated Google rating and review count:
+
+BENCHMARKS (2026):
+- 0-5 reviews: Invisible online. Losing 60%+ of Google searches to competitors.
+- 6-15 reviews: Minimal presence. Better than nothing but still losing to competitors.
+- 16-30 reviews: Competitive. Starting to win some Google searches.
+- 30+ reviews: Strong. Capturing significant local search traffic.
+- 4.7+ rating with 30+ reviews: Dominant. Price can be premium.
+
+Calculate the opportunity:
+- If they have < 15 reviews, estimate they're losing 2-4 jobs/month to competitors who rank higher
+- At their average job value, that's $X-Y/month in lost revenue
+- Review acquisition is FREE - just need a system
+
+## 10. LEAD CONVERSION ANALYSIS
+
+If their stated close rate is:
+- Under 25%: Either pricing wrong (too high or too low), quoting too slow, or targeting wrong leads
+- 25-35%: Normal for most tradies, room for improvement
+- 35-50%: Good, but may indicate slight underpricing
+- Over 50%: Likely underpriced - capturing jobs that should've been priced higher
+
+Calculate:
+- Current leads/week × conversion rate = jobs/week
+- If conversion improved by 10%, that's X more jobs/month
+- At average job value, that's $Y/month opportunity
+
+## 11. QUOTING PROCESS AUDIT
+
+Use their quoting data from the Business Context section above.
+
+Calculate the admin cost:
+- Quotes per month × time per quote × their hourly rate = TRUE cost of quoting
+- If this exceeds 10% of revenue, it's a major problem
+
+Speed matters:
+- "Within 48 hours" loses to "Same day" - 30% of customers go with whoever responds first
+- Calculate: Potential jobs lost × average job value = speed-cost
+
+## 12. OPERATIONS & EFFICIENCY ASSESSMENT
+
+Their current systems are detailed in the Business Context section above.
+
+Analyze:
+- If using "Paper / manual" or "In my head" - they're operating blind
+- No follow-up system = losing 30-40% of warm leads
+- Manual job tracking = overbooking risk + no data for optimization
+
+Administrative burden:
+- Use their stated biggest time waste from Business Context
+- This is costing them X hours/week × their hourly rate = $Z/week in lost billable time
+- Annual admin burden cost: $Z × 48 weeks
+
+System recommendations should be SPECIFIC:
+- Not "get software" but "implement [specific tool] for [specific problem]"
+- Not "automate follow-up" but "set up [specific system] to follow up Day 3 and Day 7"
+
+## 13. GROWTH ROADMAP
+
+Based on their stated goals:
+- Revenue goal: What gap needs to be closed?
+- Hiring plans: What revenue is needed before hiring makes sense?
+- Their "magic wand" wish: How do we get there practically?
+
+If they want to grow but:
+- No Google presence = marketing ceiling
+- Manual quoting = admin ceiling  
+- No follow-up = conversion ceiling
+- Underpriced = need to increase volume just to stay still
+
+## 14. REALISTIC 90-DAY ACTION PLAN
 
 For EACH action, you MUST provide:
 
@@ -512,6 +662,88 @@ Return a JSON object with these keys:
    "vehicle_cost_recovery": "string",
    "subscription_audit": ["any unnecessary expenses found"],
    "optimization_opportunities": ["specific savings"]
+}}
+
+8b. "online_presence_analysis": {{
+   "current_rating": "string",
+   "current_reviews": number,
+   "presence_score": 1-10,
+   "estimated_visibility": "invisible/weak/moderate/strong/dominant",
+   "estimated_jobs_lost_monthly": number,
+   "annual_revenue_impact": number,
+   "recommendations": ["specific actions to improve"],
+   "review_acquisition_script": "exact words to ask for reviews"
+}}
+
+8c. "lead_conversion_analysis": {{
+   "stated_conversion_rate": number,
+   "conversion_assessment": "too_low/normal/good/possibly_underpriced",
+   "leads_per_week": number,
+   "current_jobs_per_week": number,
+   "if_improved_by_10pct": {{
+     "additional_jobs_monthly": number,
+     "additional_revenue_monthly": number,
+     "annual_impact": number
+   }},
+   "conversion_blockers_identified": ["list of likely issues"],
+   "recommendations": ["specific actions"]
+}}
+
+8d. "quoting_process_analysis": {{
+   "current_method": "string",
+   "time_per_quote": "string",
+   "quotes_per_month": number,
+   "admin_cost_calculation": {{
+     "hours_per_month": number,
+     "at_billable_rate": number,
+     "annual_cost": number,
+     "percentage_of_revenue": number
+   }},
+   "speed_assessment": "fast/moderate/slow",
+   "speed_impact": {{
+     "jobs_lost_to_slower_response": number,
+     "annual_revenue_impact": number
+   }},
+   "efficiency_recommendations": ["specific improvements"],
+   "ideal_quoting_time": "what they should target"
+}}
+
+8e. "operations_efficiency": {{
+   "current_systems_score": 1-10,
+   "admin_burden_weekly_hours": number,
+   "admin_burden_annual_cost": number,
+   "biggest_stated_time_waste": "string",
+   "follow_up_assessment": "none/inconsistent/manual/automated",
+   "follow_up_impact": {{
+     "leads_lost_to_no_followup": "X per month",
+     "annual_revenue_impact": number
+   }},
+   "system_recommendations": [
+     {{
+       "problem": "specific problem",
+       "solution": "specific tool or system",
+       "implementation_time": "how long to set up",
+       "expected_time_saved_weekly": number
+     }}
+   ]
+}}
+
+8f. "growth_roadmap": {{
+   "current_revenue_estimate": number,
+   "stated_goal": "string",
+   "gap_to_goal": number,
+   "primary_growth_blockers": ["ordered list"],
+   "hiring_readiness": {{
+     "ready_to_hire": boolean,
+     "revenue_needed_before_hiring": number,
+     "current_gap": number
+   }},
+   "magic_wand_response": {{
+     "they_want": "their stated wish",
+     "practical_path": "how to actually get there",
+     "first_step": "immediate action"
+   }},
+   "90_day_priorities": ["ordered by impact"]
 }}
 
 9. "action_plan": [

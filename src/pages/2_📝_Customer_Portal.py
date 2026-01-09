@@ -32,8 +32,8 @@ st.markdown(f'<style>{load_css(css_file)}</style>', unsafe_allow_html=True)
 def show_header():
     st.markdown("""
     <div class="section">
-        <h1>🔧 Profit Leak Audit - Data Collection</h1>
-        <p>Complete this form to start your audit. Takes about 15 minutes.</p>
+        <h1>🚀 Growth Audit - Data Collection</h1>
+        <p>Complete this form to start your comprehensive business analysis. Takes about 15 minutes.</p>
     </div>
     """, unsafe_allow_html=True)
 

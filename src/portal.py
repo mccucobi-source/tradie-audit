@@ -16,8 +16,8 @@ sys.path.insert(0, str(project_root))
 import streamlit as st
 
 st.set_page_config(
-    page_title="Profit Leak Audit | Find Your Hidden Revenue",
-    page_icon="⚡",
+    page_title="Growth Audit | Business Analysis + Growth Call",
+    page_icon="🚀",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -1224,8 +1224,8 @@ def show_landing_page():
     st.markdown("""
     <div class="nav">
         <div class="nav-brand">
-            <div class="nav-brand-icon">⚡</div>
-            Profit Leak Audit
+            <div class="nav-brand-icon">🚀</div>
+            Growth Audit
         </div>
         <div class="nav-links">
             <a href="#how-it-works" class="nav-link">How it works</a>
@@ -1425,7 +1425,7 @@ def show_landing_page():
         <div class="pricing-container">
             <div class="pricing-card featured">
                 <div class="pricing-badge">Most Popular</div>
-                <div class="pricing-label">Complete Profit Leak Audit</div>
+                <div class="pricing-label">Complete Growth Audit + Strategy Call</div>
                 <div class="pricing-amount"><sup>$</sup>797</div>
                 <div class="pricing-period">One-time investment · AUD</div>
                 <ul class="pricing-features">
@@ -1809,7 +1809,7 @@ def main():
         # Footer
         st.markdown("""
         <div class="footer">
-            <div class="footer-brand">© 2026 Profit Leak Audit</div>
+            <div class="footer-brand">© 2026 Brace Growth Audit</div>
             <div class="footer-links">
                 <a href="mailto:hello@profitleakaudit.com.au">Contact</a>
                 <a href="#">Privacy</a>

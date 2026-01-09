@@ -12,8 +12,8 @@ stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
 # Product configuration
 AUDIT_PRICE = 79700  # $797 in cents
-PRODUCT_NAME = "Tradie Profit Leak Audit"
-PRODUCT_DESCRIPTION = "Complete financial audit with $10,000 money-back guarantee"
+PRODUCT_NAME = "Tradie Growth Audit"
+PRODUCT_DESCRIPTION = "Comprehensive business analysis + 90-min growth call with $10,000 money-back guarantee"
 
 
 def create_checkout_session(

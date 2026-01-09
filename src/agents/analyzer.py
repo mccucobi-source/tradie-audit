@@ -21,17 +21,50 @@ from src.utils.benchmark_engine import get_benchmark_engine
 
 
 class BusinessContext(BaseModel):
-    """Customer's business context for analysis."""
+    """Customer's business context for comprehensive analysis."""
+    # Basic info
     trade_type: str = "electrician"
     location: str = "Sydney"
     years_in_business: int = 5
     current_rate: float = 95.0
     hours_per_week: int = 50
     revenue_goal: float = 300000.0
+    
+    # Team & Scale
+    team_size: str = "Just me"
+    revenue_range: str = "$150k - $250k"
+    
+    # Pricing
+    callout_fee: str = "No call-out fee"
+    materials_markup: int = 15
+    
+    # Lead Generation
+    lead_sources: list = []
+    leads_per_week: str = "4-7"
+    close_rate: int = 40
+    google_rating: str = "No Google profile"
+    google_reviews: str = "0"
+    
+    # Quoting
+    quote_method: str = "Mental math + text/call"
+    quote_time: str = "15-30 minutes"
+    quotes_per_month: str = "10-20"
+    quote_speed: str = "Within 48 hours"
+    
+    # Operations
+    tools_used: list = []
+    job_tracking: str = "In my head"
+    follow_up_method: str = "I don't follow up consistently"
+    biggest_time_waste: str = "Creating quotes"
+    
+    # Goals
+    hiring_plans: str = "No, staying solo"
+    biggest_frustration: str = ""
+    magic_wand: str = ""
 
 
 class AnalysisResult(BaseModel):
-    """Complete analysis output - comprehensive 2026 audit with provenance."""
+    """Complete analysis output - comprehensive 2026 Growth Audit with full provenance."""
     # Core metrics
     summary: dict
     pricing_audit: dict
@@ -53,12 +86,19 @@ class AnalysisResult(BaseModel):
     next_steps: dict = {}
     worst_jobs: list = []
     
-    # NEW: Provenance and methodology
+    # NEW: Comprehensive business analysis sections
+    online_presence_analysis: dict = {}
+    lead_conversion_analysis: dict = {}
+    quoting_process_analysis: dict = {}
+    operations_efficiency: dict = {}
+    growth_roadmap: dict = {}
+    
+    # Provenance and methodology
     methodology: dict = {}
     market_benchmarks_used: dict = {}
     opportunity_summary: dict = {}
     
-    # NEW: Backend problem tracking for agent development
+    # Backend problem tracking for agent development
     backend_problems: list = []
 
 
@@ -104,7 +144,42 @@ class Analyzer:
         # Prepare data summary for Claude
         data_summary = self._prepare_data_summary(extracted_data)
         
-        # Build the analysis prompt with benchmarks
+        # Build business context dict from all intake data
+        business_context_dict = {
+            # Team & Scale
+            "team_size": context.team_size,
+            "revenue_range": context.revenue_range,
+            
+            # Pricing
+            "callout_fee": context.callout_fee,
+            "materials_markup": context.materials_markup,
+            
+            # Lead Generation
+            "lead_sources": context.lead_sources,
+            "leads_per_week": context.leads_per_week,
+            "close_rate": context.close_rate,
+            "google_rating": context.google_rating,
+            "google_reviews": context.google_reviews,
+            
+            # Quoting
+            "quote_method": context.quote_method,
+            "quote_time": context.quote_time,
+            "quotes_per_month": context.quotes_per_month,
+            "quote_speed": context.quote_speed,
+            
+            # Operations
+            "tools_used": context.tools_used,
+            "job_tracking": context.job_tracking,
+            "follow_up_method": context.follow_up_method,
+            "biggest_time_waste": context.biggest_time_waste,
+            
+            # Goals
+            "hiring_plans": context.hiring_plans,
+            "biggest_frustration": context.biggest_frustration,
+            "magic_wand": context.magic_wand
+        }
+        
+        # Build the analysis prompt with benchmarks and full context
         prompt = get_analysis_prompt(
             data_summary=data_summary,
             trade_type=context.trade_type,
@@ -113,14 +188,15 @@ class Analyzer:
             current_rate=context.current_rate,
             hours_per_week=context.hours_per_week,
             revenue_goal=context.revenue_goal,
-            market_benchmarks=market_benchmarks
+            market_benchmarks=market_benchmarks,
+            business_context=business_context_dict
         )
         
         # Call Claude for analysis
         print("Running analysis with Claude...")
         message = self.client.messages.create(
             model=self.model,
-            max_tokens=8192,
+            max_tokens=16384,
             messages=[
                 {
                     "role": "user",
@@ -207,12 +283,19 @@ class Analyzer:
             next_steps=analysis.get("next_steps", {}),
             worst_jobs=analysis.get("worst_jobs", []),
             
-            # NEW: Provenance and methodology
+            # NEW: Comprehensive business analysis sections
+            online_presence_analysis=analysis.get("online_presence_analysis", {}),
+            lead_conversion_analysis=analysis.get("lead_conversion_analysis", {}),
+            quoting_process_analysis=analysis.get("quoting_process_analysis", {}),
+            operations_efficiency=analysis.get("operations_efficiency", {}),
+            growth_roadmap=analysis.get("growth_roadmap", {}),
+            
+            # Provenance and methodology
             methodology=analysis.get("methodology", {}),
             market_benchmarks_used=market_benchmarks,
             opportunity_summary=opportunity,
             
-            # NEW: Backend problem tracking
+            # Backend problem tracking
             backend_problems=analysis.get("backend_problems_identified", [])
         )
     

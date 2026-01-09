@@ -33,8 +33,9 @@ def show_header():
     """Display the main header."""
     st.markdown("""
     <div class="section">
-        <h1>🔧 Tradie Profit Leak Audit</h1>
-        <p>Find $10k-50k in hidden profit opportunities</p>
+        <h1>🚀 Tradie Growth Audit</h1>
+        <p>Comprehensive business analysis + 90-minute growth strategy call</p>
+        <p style="font-size: 0.9rem; opacity: 0.8;">Find hidden profit, fix operational bottlenecks, and get a clear path to your revenue goals</p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -336,7 +337,7 @@ def home_page():
     )
     
     if ready:
-        if st.button("🚀 Run Profit Leak Audit", type="primary", use_container_width=True):
+        if st.button("🚀 Run Growth Audit", type="primary", use_container_width=True):
             try:
                 results = run_analysis(uploaded_files, business_info)
                 st.session_state['results'] = results
@@ -346,7 +347,7 @@ def home_page():
                 st.code(traceback.format_exc())
     else:
         st.button(
-            "🚀 Run Profit Leak Audit", 
+            "🚀 Run Growth Audit", 
             type="primary", 
             use_container_width=True,
             disabled=True,

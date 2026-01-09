@@ -1060,7 +1060,7 @@ These numbers assume you actually implement the changes. They won't happen by th
 <body>
     <div class="container">
         <header>
-            <div class="report-label">Profit Leak Audit Report</div>
+            <div class="report-label">Growth Audit Report</div>
             <h1>{{ customer_name }}</h1>
             <div class="date">{{ date }} · {{ context.trade_type | capitalize }} · {{ context.location }}</div>
         </header>
@@ -1419,6 +1419,237 @@ These numbers assume you actually implement the changes. They won't happen by th
         </section>
         {% endif %}
         
+        <!-- NEW: Online Presence Analysis -->
+        {% if online_presence_analysis and online_presence_analysis.presence_score %}
+        <section>
+            <h2>🌐 Online Presence Assessment</h2>
+            <div class="metric-grid" style="grid-template-columns: repeat(4, 1fr);">
+                <div class="metric-card">
+                    <div class="metric-label">Presence Score</div>
+                    <div class="metric-value" style="color: {% if online_presence_analysis.presence_score >= 7 %}var(--success){% elif online_presence_analysis.presence_score >= 4 %}var(--warning){% else %}#dc2626{% endif %};">{{ online_presence_analysis.presence_score }}/10</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Google Rating</div>
+                    <div class="metric-value">{{ online_presence_analysis.current_rating or 'N/A' }}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Reviews</div>
+                    <div class="metric-value">{{ online_presence_analysis.current_reviews or 0 }}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Visibility</div>
+                    <div class="metric-value" style="font-size: 18px; text-transform: capitalize;">{{ online_presence_analysis.estimated_visibility or 'Unknown' }}</div>
+                </div>
+            </div>
+            
+            {% if online_presence_analysis.estimated_jobs_lost_monthly %}
+            <div class="risk-box" style="margin-top: 20px;">
+                <strong>⚠️ Estimated Impact:</strong> You may be losing ~{{ online_presence_analysis.estimated_jobs_lost_monthly }} jobs/month to competitors with stronger online presence.
+                Annual revenue impact: <strong style="color: #dc2626;">${{ "{:,.0f}".format(online_presence_analysis.annual_revenue_impact or 0) }}</strong>
+            </div>
+            {% endif %}
+            
+            {% if online_presence_analysis.recommendations %}
+            <h3 style="margin-top: 20px;">Online Presence Actions</h3>
+            <ul style="padding-left: 24px;">
+                {% for rec in online_presence_analysis.recommendations %}
+                <li style="margin-bottom: 8px;">{{ rec }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            
+            {% if online_presence_analysis.review_acquisition_script %}
+            <div class="evidence" style="margin-top: 16px;">
+                <strong>📝 Review Request Script:</strong><br>
+                <em>"{{ online_presence_analysis.review_acquisition_script }}"</em>
+            </div>
+            {% endif %}
+        </section>
+        {% endif %}
+        
+        <!-- NEW: Lead Conversion Analysis -->
+        {% if lead_conversion_analysis and lead_conversion_analysis.stated_conversion_rate %}
+        <section>
+            <h2>📊 Lead Conversion Analysis</h2>
+            <div class="metric-grid" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="metric-card">
+                    <div class="metric-label">Your Conversion Rate</div>
+                    <div class="metric-value" style="color: {% if lead_conversion_analysis.stated_conversion_rate >= 40 %}var(--success){% elif lead_conversion_analysis.stated_conversion_rate >= 25 %}var(--warning){% else %}#dc2626{% endif %};">{{ lead_conversion_analysis.stated_conversion_rate }}%</div>
+                    <div class="metric-context">{{ lead_conversion_analysis.conversion_assessment | default('') | replace('_', ' ') | title }}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Leads/Week</div>
+                    <div class="metric-value">{{ lead_conversion_analysis.leads_per_week or 'N/A' }}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Jobs/Week</div>
+                    <div class="metric-value">{{ lead_conversion_analysis.current_jobs_per_week or 'N/A' }}</div>
+                </div>
+            </div>
+            
+            {% if lead_conversion_analysis.if_improved_by_10pct %}
+            <div class="opportunity-box" style="margin-top: 20px; padding: 16px; background: rgba(34, 197, 94, 0.1); border-radius: 12px; border: 1px solid rgba(34, 197, 94, 0.2);">
+                <strong style="color: var(--success);">📈 If conversion improved by 10%:</strong><br>
+                <span style="font-size: 14px; color: var(--text-muted);">
+                    +{{ lead_conversion_analysis.if_improved_by_10pct.additional_jobs_monthly or 0 }} jobs/month = 
+                    <strong style="color: var(--success);">${{ "{:,.0f}".format(lead_conversion_analysis.if_improved_by_10pct.annual_impact or 0) }}/year</strong>
+                </span>
+            </div>
+            {% endif %}
+            
+            {% if lead_conversion_analysis.conversion_blockers_identified %}
+            <h3 style="margin-top: 20px;">Potential Conversion Blockers</h3>
+            {% for blocker in lead_conversion_analysis.conversion_blockers_identified %}
+            <div class="risk-box" style="margin-bottom: 8px;">{{ blocker }}</div>
+            {% endfor %}
+            {% endif %}
+        </section>
+        {% endif %}
+        
+        <!-- NEW: Quoting Process Analysis -->
+        {% if quoting_process_analysis and quoting_process_analysis.current_method %}
+        <section>
+            <h2>⏱️ Quoting Process Audit</h2>
+            <div class="metric-grid" style="grid-template-columns: repeat(4, 1fr);">
+                <div class="metric-card">
+                    <div class="metric-label">Method</div>
+                    <div class="metric-value" style="font-size: 14px;">{{ quoting_process_analysis.current_method or 'Unknown' }}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Time/Quote</div>
+                    <div class="metric-value" style="font-size: 16px;">{{ quoting_process_analysis.time_per_quote or 'Unknown' }}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Quotes/Month</div>
+                    <div class="metric-value">{{ quoting_process_analysis.quotes_per_month or 0 }}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Quote Speed</div>
+                    <div class="metric-value" style="font-size: 14px; color: {% if quoting_process_analysis.speed_assessment == 'fast' %}var(--success){% elif quoting_process_analysis.speed_assessment == 'slow' %}#dc2626{% else %}var(--warning){% endif %};">{{ quoting_process_analysis.speed_assessment | default('unknown') | title }}</div>
+                </div>
+            </div>
+            
+            {% if quoting_process_analysis.admin_cost_calculation %}
+            <div class="risk-box" style="margin-top: 20px;">
+                <strong>💸 Your Quoting Admin Cost:</strong><br>
+                {{ quoting_process_analysis.admin_cost_calculation.hours_per_month or 0 }} hours/month × ${{ context.current_rate }}/hr = 
+                <strong style="color: #dc2626;">${{ "{:,.0f}".format(quoting_process_analysis.admin_cost_calculation.annual_cost or 0) }}/year</strong>
+                <span style="font-size: 12px; color: var(--text-muted);">({{ quoting_process_analysis.admin_cost_calculation.percentage_of_revenue or 0 }}% of revenue)</span>
+            </div>
+            {% endif %}
+            
+            {% if quoting_process_analysis.speed_impact and quoting_process_analysis.speed_impact.jobs_lost_to_slower_response %}
+            <div class="risk-box" style="margin-top: 12px;">
+                <strong>⚠️ Speed Impact:</strong> Slower quotes may be costing you ~{{ quoting_process_analysis.speed_impact.jobs_lost_to_slower_response }} jobs/year = 
+                <strong style="color: #dc2626;">${{ "{:,.0f}".format(quoting_process_analysis.speed_impact.annual_revenue_impact or 0) }}</strong> in lost revenue
+            </div>
+            {% endif %}
+            
+            {% if quoting_process_analysis.efficiency_recommendations %}
+            <h3 style="margin-top: 20px;">Quoting Efficiency Actions</h3>
+            <ul style="padding-left: 24px;">
+                {% for rec in quoting_process_analysis.efficiency_recommendations %}
+                <li style="margin-bottom: 8px;">{{ rec }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </section>
+        {% endif %}
+        
+        <!-- NEW: Operations Efficiency -->
+        {% if operations_efficiency and operations_efficiency.current_systems_score %}
+        <section>
+            <h2>⚙️ Operations Efficiency</h2>
+            <div class="metric-grid" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="metric-card">
+                    <div class="metric-label">Systems Score</div>
+                    <div class="metric-value" style="color: {% if operations_efficiency.current_systems_score >= 7 %}var(--success){% elif operations_efficiency.current_systems_score >= 4 %}var(--warning){% else %}#dc2626{% endif %};">{{ operations_efficiency.current_systems_score }}/10</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Admin Burden</div>
+                    <div class="metric-value">{{ operations_efficiency.admin_burden_weekly_hours or 0 }} hrs/wk</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Annual Admin Cost</div>
+                    <div class="metric-value" style="color: #dc2626;">${{ "{:,.0f}".format(operations_efficiency.admin_burden_annual_cost or 0) }}</div>
+                </div>
+            </div>
+            
+            {% if operations_efficiency.biggest_stated_time_waste %}
+            <div class="evidence" style="margin-top: 20px;">
+                <strong>You told us:</strong> "{{ operations_efficiency.biggest_stated_time_waste }}" is your biggest time waste.
+            </div>
+            {% endif %}
+            
+            {% if operations_efficiency.follow_up_impact and operations_efficiency.follow_up_impact.annual_revenue_impact %}
+            <div class="risk-box" style="margin-top: 12px;">
+                <strong>📉 Follow-up Gap:</strong> {{ operations_efficiency.follow_up_assessment | default('Inconsistent') | title }} follow-up is costing you approximately 
+                <strong style="color: #dc2626;">${{ "{:,.0f}".format(operations_efficiency.follow_up_impact.annual_revenue_impact or 0) }}/year</strong>
+            </div>
+            {% endif %}
+            
+            {% if operations_efficiency.system_recommendations %}
+            <h3 style="margin-top: 20px;">System Recommendations</h3>
+            {% for rec in operations_efficiency.system_recommendations %}
+            <div class="evidence" style="margin-bottom: 12px; background: #fff;">
+                <strong>Problem:</strong> {{ rec.problem }}<br>
+                <strong>Solution:</strong> {{ rec.solution }}<br>
+                <span style="font-size: 12px; color: var(--text-muted);">Setup: {{ rec.implementation_time }} · Saves: {{ rec.expected_time_saved_weekly }} hrs/week</span>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </section>
+        {% endif %}
+        
+        <!-- NEW: Growth Roadmap -->
+        {% if growth_roadmap and growth_roadmap.gap_to_goal %}
+        <section>
+            <h2>🚀 Your Growth Roadmap</h2>
+            <div class="metric-grid" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="metric-card">
+                    <div class="metric-label">Current Revenue (Est)</div>
+                    <div class="metric-value">${{ "{:,.0f}".format(growth_roadmap.current_revenue_estimate or 0) }}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Your Goal</div>
+                    <div class="metric-value" style="color: var(--accent);">{{ growth_roadmap.stated_goal or 'Not set' }}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Gap to Goal</div>
+                    <div class="metric-value" style="color: var(--warning);">${{ "{:,.0f}".format(growth_roadmap.gap_to_goal or 0) }}</div>
+                </div>
+            </div>
+            
+            {% if growth_roadmap.primary_growth_blockers %}
+            <h3 style="margin-top: 20px;">Your Primary Growth Blockers</h3>
+            <ol style="padding-left: 24px;">
+                {% for blocker in growth_roadmap.primary_growth_blockers %}
+                <li style="margin-bottom: 8px;">{{ blocker }}</li>
+                {% endfor %}
+            </ol>
+            {% endif %}
+            
+            {% if growth_roadmap.magic_wand_response %}
+            <div class="evidence" style="margin-top: 20px; background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(251, 191, 36, 0.05));">
+                <strong style="color: var(--accent);">✨ You said: "{{ growth_roadmap.magic_wand_response.they_want }}"</strong><br><br>
+                <strong>Practical Path:</strong> {{ growth_roadmap.magic_wand_response.practical_path }}<br><br>
+                <strong>First Step:</strong> {{ growth_roadmap.magic_wand_response.first_step }}
+            </div>
+            {% endif %}
+            
+            {% if growth_roadmap.hiring_readiness %}
+            <div class="evidence" style="margin-top: 16px;">
+                <strong>Hiring Readiness:</strong> 
+                {% if growth_roadmap.hiring_readiness.ready_to_hire %}
+                <span style="color: var(--success);">✓ You're ready to hire</span>
+                {% else %}
+                You need ${{ "{:,.0f}".format(growth_roadmap.hiring_readiness.current_gap or 0) }} more in revenue before hiring makes sense.
+                {% endif %}
+            </div>
+            {% endif %}
+        </section>
+        {% endif %}
+        
         {% if job_analysis %}
         <section>
             <h2>Job Profitability Breakdown</h2>
@@ -1475,7 +1706,7 @@ These numbers assume you actually implement the changes. They won't happen by th
                 {% endfor %}
             </table>
             <div class="evidence" style="margin-top: 16px; background: #fff;">
-                <strong>💡 Key Lesson:</strong> {{ worst_jobs[0].lesson if worst_jobs else 'Avoid small jobs that don\'t cover your real costs.' }}
+                <strong>💡 Key Lesson:</strong> {{ worst_jobs[0].lesson if worst_jobs else "Avoid small jobs that do not cover your real costs." }}
             </div>
         </div>
         {% endif %}
@@ -1629,7 +1860,13 @@ These numbers assume you actually implement the changes. They won't happen by th
             data_quality=analysis.data_quality,
             next_steps=analysis.next_steps,
             worst_jobs=analysis.worst_jobs,
-            # NEW: Methodology and provenance
+            # NEW: Comprehensive business analysis sections
+            online_presence_analysis=analysis.online_presence_analysis,
+            lead_conversion_analysis=analysis.lead_conversion_analysis,
+            quoting_process_analysis=analysis.quoting_process_analysis,
+            operations_efficiency=analysis.operations_efficiency,
+            growth_roadmap=analysis.growth_roadmap,
+            # Methodology and provenance
             methodology=analysis.methodology,
             market_benchmarks=analysis.market_benchmarks_used,
             opportunity_summary=analysis.opportunity_summary
