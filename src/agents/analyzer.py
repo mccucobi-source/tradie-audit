@@ -1,16 +1,23 @@
 """
 Analysis Agent - Performs financial analysis and generates insights.
 The brain of the audit system.
+
+2026 UPGRADE: Now includes:
+- Market benchmarks with full provenance
+- Three-scenario projections
+- Calculation transparency
+- Data capture for agent development
 """
 
 import os
 import json
-from typing import Optional
+from typing import Optional, Dict, Any
 from datetime import datetime
 import anthropic
 from pydantic import BaseModel
 
 from src.templates.prompts import get_analysis_prompt, get_customer_categorization_prompt
+from src.utils.benchmark_engine import get_benchmark_engine
 
 
 class BusinessContext(BaseModel):
@@ -24,7 +31,7 @@ class BusinessContext(BaseModel):
 
 
 class AnalysisResult(BaseModel):
-    """Complete analysis output - comprehensive 2026 audit."""
+    """Complete analysis output - comprehensive 2026 audit with provenance."""
     # Core metrics
     summary: dict
     pricing_audit: dict
@@ -45,6 +52,14 @@ class AnalysisResult(BaseModel):
     missing_data: dict = {}
     next_steps: dict = {}
     worst_jobs: list = []
+    
+    # NEW: Provenance and methodology
+    methodology: dict = {}
+    market_benchmarks_used: dict = {}
+    opportunity_summary: dict = {}
+    
+    # NEW: Backend problem tracking for agent development
+    backend_problems: list = []
 
 
 class Analyzer:
@@ -82,10 +97,14 @@ class Analyzer:
         Returns:
             AnalysisResult with all insights and recommendations
         """
+        # Get market benchmarks with provenance
+        benchmark_engine = get_benchmark_engine()
+        market_benchmarks = self._get_market_benchmarks(benchmark_engine, context)
+        
         # Prepare data summary for Claude
         data_summary = self._prepare_data_summary(extracted_data)
         
-        # Build the analysis prompt
+        # Build the analysis prompt with benchmarks
         prompt = get_analysis_prompt(
             data_summary=data_summary,
             trade_type=context.trade_type,
@@ -93,7 +112,8 @@ class Analyzer:
             years_in_business=context.years_in_business,
             current_rate=context.current_rate,
             hours_per_week=context.hours_per_week,
-            revenue_goal=context.revenue_goal
+            revenue_goal=context.revenue_goal,
+            market_benchmarks=market_benchmarks
         )
         
         # Call Claude for analysis
@@ -185,8 +205,47 @@ class Analyzer:
             expense_insights=analysis.get("expense_insights", {}),
             missing_data=analysis.get("missing_data", {}),
             next_steps=analysis.get("next_steps", {}),
-            worst_jobs=analysis.get("worst_jobs", [])
+            worst_jobs=analysis.get("worst_jobs", []),
+            
+            # NEW: Provenance and methodology
+            methodology=analysis.get("methodology", {}),
+            market_benchmarks_used=market_benchmarks,
+            opportunity_summary=opportunity,
+            
+            # NEW: Backend problem tracking
+            backend_problems=analysis.get("backend_problems_identified", [])
         )
+    
+    def _get_market_benchmarks(self, engine, context: BusinessContext) -> Dict[str, Any]:
+        """
+        Fetch market benchmarks with full provenance for inclusion in the audit.
+        
+        Returns structured benchmark data that will be:
+        1. Passed to Claude for analysis context
+        2. Included in the final report for citation
+        """
+        hourly_rate = engine.get_hourly_rate(context.trade_type, context.location)
+        call_out_fee = engine.get_call_out_fee(context.trade_type)
+        common_jobs = engine.get_common_job_costs(context.trade_type)
+        market_patterns = engine.get_market_patterns()
+        
+        # Calculate current rate percentile
+        rate_percentile = engine.calculate_rate_percentile(
+            context.current_rate, 
+            context.trade_type, 
+            context.location
+        )
+        
+        return {
+            "hourly_rate": hourly_rate,
+            "call_out_fee": call_out_fee,
+            "common_jobs": common_jobs,
+            "market_patterns": market_patterns,
+            "current_rate_percentile": rate_percentile,
+            "retrieved_at": datetime.now().isoformat(),
+            "trade": context.trade_type,
+            "location": context.location
+        }
     
     def _normalize_profitability(self, analysis: dict) -> dict:
         """Convert job_analysis array to profitability dict format."""

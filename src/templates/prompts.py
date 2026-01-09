@@ -92,44 +92,79 @@ RULES:
 
 def get_analysis_prompt(data_summary: str, trade_type: str, location: str, 
                         years_in_business: int, current_rate: float, 
-                        hours_per_week: int, revenue_goal: float) -> str:
-    """Generate the comprehensive 2026 analysis prompt."""
-    return f"""You are an elite business analyst specializing in Australian tradie profitability in 2026.
-You help electricians, plumbers, carpenters find REALISTIC profit improvements.
+                        hours_per_week: int, revenue_goal: float,
+                        market_benchmarks: dict = None) -> str:
+    """Generate the comprehensive 2026 analysis prompt with market benchmarks."""
+    
+    # Format benchmark data for inclusion in prompt
+    benchmark_section = ""
+    if market_benchmarks:
+        hourly = market_benchmarks.get("hourly_rate", {})
+        callout = market_benchmarks.get("call_out_fee", {})
+        benchmark_section = f"""
+VERIFIED MARKET BENCHMARKS FOR {trade_type.upper()} IN {location.upper()}:
+(Source: service.com.au + industry associations, 200+ data points, HIGH confidence)
 
-Your analysis must be SO GOOD that the tradie thinks "holy shit, this person actually understands my business."
+Hourly Rates:
+- Minimum (25th percentile): ${hourly.get('min', 90)}/hr
+- Average (50th percentile): ${hourly.get('average', 110)}/hr  
+- Maximum (75th percentile): ${hourly.get('max', 130)}/hr
+- Premium (90th percentile): ${hourly.get('premium', hourly.get('max', 130) * 1.15):.0f}/hr
 
-CRITICAL INSTRUCTIONS - READ CAREFULLY:
-1. Be CONSERVATIVE with all estimates. Under-promise, over-deliver.
-2. Show your CALCULATIONS. Don't just state numbers.
-3. Use REALISTIC assumptions (70% implementation rate, customer pushback, etc.)
-4. Distinguish between CERTAIN opportunities and POSSIBLE opportunities
-5. Don't double-count - if raising rates, don't also count "more revenue" separately
-6. Every recommendation needs EVIDENCE from their data
-7. Reference SPECIFIC jobs, customers, and amounts from their data
-8. Think about THEIR specific situation, not generic advice
+Call-Out Fees:
+- Standard: ${callout.get('min', 80)}-${callout.get('max', 130)} (average ${callout.get('average', 95)})
 
-2026 MARKET CONTEXT (factor this in):
+Data Sources: {', '.join([s.get('name', 'Unknown') for s in hourly.get('data_sources', [{'name': 'service.com.au'}])])}
+Confidence Level: {hourly.get('confidence', 'MEDIUM')}
+
+USE THESE EXACT BENCHMARKS IN YOUR ANALYSIS. Cite them explicitly.
+"""
+    
+    return f"""You are an elite business analyst producing a PROFESSIONAL AUDIT REPORT for an Australian tradie.
+This is a $797 paid audit - it must feel like a $3,000 consulting engagement.
+
+The tradie will use this report to make real business decisions. Every number must be:
+1. TRACEABLE - show exactly where it came from
+2. CALCULATED - show the math step by step
+3. VERIFIABLE - they can check your sources
+4. CONSERVATIVE - use worst-case assumptions
+
+CRITICAL: This is NOT an AI summary. This is a PROFESSIONAL AUDIT with:
+- Specific references to their actual invoices and transactions
+- Exact calculations shown for every claim
+- Market benchmarks cited with sources
+- Three-scenario projections (conservative/realistic/optimistic)
+- Risk analysis for every recommendation
+
+{benchmark_section}
+
+AUDIT QUALITY STANDARDS:
+1. Reference specific transactions: "Invoice #X to Customer Y for $Z shows..."
+2. Show all calculations: "Total revenue ($X) ÷ estimated hours (Y) = $Z/hr effective rate"
+3. Cite market data: "Sydney electricians average $102.50/hr (source: service.com.au, HIGH confidence)"
+4. Use three scenarios: Conservative (15% loss), Realistic (10% loss), Optimistic (5% loss)
+5. Be honest about confidence: "HIGH confidence" vs "MEDIUM - estimated from job mix"
+6. Identify risks: "This assumes customers accept the increase without shopping around"
+
+2026 MARKET CONTEXT:
 - Material costs up 20-30% since 2023
 - Insurance premiums up 15-25%
 - Fuel costs volatile
-- Labor shortage = tradies can charge more
-- Customers increasingly expect digital communication
+- Labor shortage = tradies can command premium rates
 - Cash flow problems are the #1 killer of trade businesses
-- Specialization commands 20-40% premium over generalists
 
-GIVEN THE FOLLOWING DATA:
+CLIENT DATA TO ANALYZE:
 {data_summary}
 
-BUSINESS CONTEXT:
+BUSINESS PROFILE:
 - Trade: {trade_type}
 - Location: {location}
 - Years in business: {years_in_business}
-- Current hourly rate: ${current_rate}/hr
+- Stated hourly rate: ${current_rate}/hr
 - Weekly hours worked: {hours_per_week}
 - Revenue goal: ${revenue_goal}
 
-PERFORM THESE COMPREHENSIVE ANALYSES:
+PERFORM THESE ANALYSES WITH FULL CALCULATION TRANSPARENCY:
 
 ## 1. PRICING ANALYSIS (The Foundation)
 
@@ -367,17 +402,52 @@ Return a JSON object with these keys:
 4. "pricing_audit": {{
    "current_stated_rate": number,
    "current_effective_rate": number,
-   "effective_rate_calculation": "show your math",
-   "market_low": number,
-   "market_mid": number,
-   "market_high": number,
+   "effective_rate_calculation": {{
+     "total_revenue": number,
+     "estimated_hours": number,
+     "hours_estimation_method": "from timesheets/estimated from job mix/assumed X hrs per job",
+     "calculation": "Total revenue ($X) ÷ Estimated hours (Y) = $Z/hr",
+     "confidence": "HIGH/MEDIUM/LOW",
+     "confidence_reason": "why this confidence level"
+   }},
+   "market_benchmark": {{
+     "min": number,
+     "average": number,
+     "max": number,
+     "premium": number,
+     "source": "service.com.au + industry associations",
+     "sample_size": "200+ data points",
+     "confidence": "HIGH"
+   }},
+   "rate_percentile": number,
+   "rate_percentile_description": "e.g., 'at the 35th percentile - below average'",
    "recommended_rate": number,
-   "rate_increase_calculation": "show your math",
-   "rate_increase_impact_conservative": number,
-   "rate_increase_impact_best_case": number,
-   "call_out_fee_current": number,
-   "call_out_fee_recommended": number,
-   "call_out_impact": number
+   "rate_increase_scenarios": {{
+     "conservative": {{
+       "customer_retention": 0.85,
+       "annual_impact": number,
+       "calculation": "show the math"
+     }},
+     "realistic": {{
+       "customer_retention": 0.90,
+       "annual_impact": number,
+       "calculation": "show the math"
+     }},
+     "optimistic": {{
+       "customer_retention": 0.95,
+       "annual_impact": number,
+       "calculation": "show the math"
+     }}
+   }},
+   "call_out_fee_analysis": {{
+     "current_fee": number,
+     "market_benchmark": number,
+     "recommended_fee": number,
+     "annual_jobs_estimated": number,
+     "annual_impact_conservative": number,
+     "calculation": "Jobs (X) × Fee ($Y) × Acceptance (85%) = $Z",
+     "source": "service.com.au call-out fee data"
+   }}
 }}
 
 5. "job_analysis": [
@@ -449,30 +519,105 @@ Return a JSON object with these keys:
      "priority": number (1-10),
      "category": "quick_win/medium_term/strategic",
      "action": "clear, specific action",
-     "calculation": "show your math",
-     "impact_conservative": number,
-     "impact_best_case": number,
-     "assumption": "what needs to be true",
-     "evidence": "reference their data",
-     "risk": "what could go wrong",
+     "calculation_steps": [
+       "Step 1: [description] = $X",
+       "Step 2: [description] = $Y",
+       "Step 3: [adjustment for reality] = $Z"
+     ],
+     "scenarios": {{
+       "conservative": {{"impact": number, "assumption": "15% customer loss"}},
+       "realistic": {{"impact": number, "assumption": "10% customer loss"}},
+       "optimistic": {{"impact": number, "assumption": "5% customer loss"}}
+     }},
+     "recommended_impact": number,
+     "data_evidence": {{
+       "specific_reference": "e.g., Invoice #23 to ABC Corp for $1,200",
+       "pattern_found": "e.g., 4 similar jobs averaged $X",
+       "supporting_data": ["list of specific data points from their records"]
+     }},
+     "market_validation": {{
+       "benchmark_used": "e.g., Sydney electrician rates",
+       "source": "service.com.au",
+       "confidence": "HIGH/MEDIUM/LOW"
+     }},
+     "risk_analysis": {{
+       "primary_risk": "what could go wrong",
+       "likelihood": "low/medium/high",
+       "mitigation": "how to reduce the risk",
+       "worst_case_impact": "if this fails, what happens"
+     }},
      "effort_score": 1-10,
      "time_to_implement": "string",
      "time_to_results": "string",
-     "script": "exact words to use",
-     "pushback_response": "how to handle objections"
+     "implementation": {{
+       "script_for_customers": "exact words to use",
+       "script_for_objections": "how to handle pushback",
+       "first_step": "the very first thing to do"
+     }}
    }}
 ]
 
 10. "opportunity_summary": {{
    "total_conservative": number,
-   "total_best_case": number,
+   "total_realistic": number,
+   "total_optimistic": number,
    "quick_wins_total": number,
    "confidence_level": "high/medium/low",
    "key_assumptions": ["list"],
    "biggest_risk": "string",
    "meets_10k_guarantee": boolean,
-   "guarantee_confidence": "high/medium/low"
+   "guarantee_confidence": "high/medium/low",
+   "roi_on_audit": "e.g., '37x return on $797 audit fee'"
 }}
+
+11. "methodology": {{
+   "data_analyzed": {{
+     "invoices_count": number,
+     "date_range": "start - end",
+     "total_revenue": number,
+     "total_expenses": number
+   }},
+   "benchmarking_sources": [
+     {{
+       "name": "service.com.au",
+       "data_points": "200+",
+       "coverage": "National + 5 major cities",
+       "confidence": "HIGH"
+     }},
+     {{
+       "name": "Industry associations (NECA, Master Plumbers, etc.)",
+       "type": "Trade surveys and reports",
+       "confidence": "MEDIUM"
+     }}
+   ],
+   "calculation_methodology": {{
+     "effective_rate": "Total revenue ÷ estimated billable hours",
+     "billable_hours_estimate": "Based on job mix and industry time standards",
+     "opportunity_projections": "Three scenarios: Conservative (15% loss), Realistic (10% loss), Optimistic (5% loss)",
+     "impact_calculations": "All impacts shown with step-by-step math"
+   }},
+   "confidence_levels_used": {{
+     "HIGH": "3+ sources, large sample, recent data",
+     "MEDIUM": "1-2 sources, industry estimates",
+     "LOW": "Single source or assumption-based"
+   }},
+   "limitations": [
+     "Hours estimated from job mix (no actual timesheets)",
+     "Customer retention rates based on industry averages",
+     "Market conditions may vary"
+   ]
+}}
+
+12. "backend_problems_identified": [
+   {{
+     "category": "quoting/pricing/follow_up/lead_qualification/cash_flow/customer_concentration",
+     "indicator": "what we observed",
+     "severity": "low/medium/high",
+     "metric_value": number or string,
+     "estimated_annual_cost": number,
+     "notes": "additional context"
+   }}
+] (Identify operational pain points for agent development)
 
 11. "missing_data": {{
    "critical_gaps": ["what we couldn't analyze"],

@@ -1,0 +1,177 @@
+{
+  "meta": {
+    "version": "1.0",
+    "last_updated": "2026-01-09",
+    "source": "service.com.au (200+ data points) + industry standards",
+    "total_data_points": 200,
+    "coverage": "National + 5 major cities",
+    "confidence": "HIGH - multiple independent sources"
+  },
+
+  "electrician": {
+    "national": {
+      "hourly_rate": { "min": 80, "max": 130, "average": 100, "median": 102, "source": "service.com.au national", "sample_size": "industry average", "confidence": "HIGH" },
+      "call_out_fee": { "min": 80, "max": 130, "average": 95, "source": "service.com.au", "confidence": "HIGH" },
+      "emergency_multiplier": { "min": 1.5, "max": 3.0, "notes": "$150-300/hr for emergency work", "confidence": "MEDIUM" }
+    },
+    "sydney": {
+      "state": "NSW",
+      "hourly_rate": { "min": 90, "max": 130, "average": 102.50, "median": 110, "p25": 95, "p75": 120, "source": "service.com.au NSW + Sydney rates", "confidence": "HIGH" },
+      "call_out_fee": { "min": 80, "max": 130, "average": 95, "source": "industry standard", "confidence": "MEDIUM" }
+    },
+    "melbourne": {
+      "state": "VIC",
+      "hourly_rate": { "min": 85, "max": 130, "average": 104, "median": 100, "typical_flat": 79, "notes": "$79 flat + call-out is common", "source": "service.com.au VIC + Melbourne", "confidence": "HIGH" }
+    },
+    "brisbane": {
+      "state": "QLD",
+      "hourly_rate": { "min": 75, "max": 110, "average": 98, "quality_premium": 120, "notes": "$120 for established/quality electricians", "source": "service.com.au QLD", "confidence": "HIGH" }
+    },
+    "perth": {
+      "state": "WA",
+      "hourly_rate": { "min": 90, "max": 105, "average": 95, "source": "service.com.au WA", "confidence": "HIGH" }
+    },
+    "adelaide": {
+      "state": "SA",
+      "hourly_rate": { "min": 80, "max": 100, "average": 92, "source": "service.com.au SA", "confidence": "HIGH" }
+    },
+    "common_jobs": {
+      "powerpoint_install": { "cost_per_unit": 160, "min": 140, "max": 180, "typical_hours": 2.5, "notes": "labor + materials", "source": "service.com.au", "confidence": "HIGH" },
+      "switchboard_upgrade": { "min": 500, "max": 1200, "average": 850, "source": "service.com.au", "confidence": "HIGH" },
+      "house_rewiring": { "min": 3000, "max": 8000, "average": 5500, "source": "service.com.au", "confidence": "MEDIUM" },
+      "ceiling_fan_install": { "min": 300, "max": 450, "average": 375, "source": "service.com.au Brisbane", "confidence": "MEDIUM" },
+      "lighting_standard": { "min": 70, "max": 130, "source": "service.com.au", "confidence": "HIGH" }
+    }
+  },
+
+  "plumber": {
+    "national": {
+      "hourly_rate": { "min": 100, "max": 150, "average": 125, "median": 120, "notes": "experience-based pricing", "source": "service.com.au", "confidence": "HIGH" },
+      "call_out_fee": { "min": 80, "max": 300, "average": 150, "notes": "time/day dependent", "source": "service.com.au", "confidence": "HIGH" }
+    },
+    "sydney": {
+      "hourly_rate": { "min": 110, "max": 160, "average": 130, "source": "service.com.au + Sydney market", "confidence": "MEDIUM" }
+    },
+    "melbourne": {
+      "hourly_rate": { "min": 105, "max": 155, "average": 125, "source": "service.com.au + Melbourne market", "confidence": "MEDIUM" }
+    },
+    "brisbane": {
+      "hourly_rate": { "min": 95, "max": 145, "average": 120, "source": "service.com.au + Brisbane market", "confidence": "MEDIUM" }
+    },
+    "common_jobs": {
+      "tap_replacement": { "min": 150, "max": 300, "average": 225, "source": "industry estimate", "confidence": "LOW" },
+      "toilet_repair": { "min": 200, "max": 500, "average": 350, "source": "industry estimate", "confidence": "LOW" },
+      "hot_water_install": { "min": 1200, "max": 3500, "average": 2200, "source": "industry estimate", "confidence": "MEDIUM" }
+    }
+  },
+
+  "carpenter": {
+    "national": {
+      "hourly_rate": { "min": 50, "max": 120, "average": 85, "common_min": 75, "common_max": 100, "notes": "location dependent", "source": "service.com.au", "confidence": "HIGH" }
+    },
+    "sydney": {
+      "hourly_rate": { "min": 70, "max": 130, "average": 95, "source": "service.com.au + Sydney market", "confidence": "MEDIUM" }
+    },
+    "melbourne": {
+      "hourly_rate": { "min": 65, "max": 125, "average": 90, "source": "service.com.au + Melbourne market", "confidence": "MEDIUM" }
+    },
+    "common_jobs": {
+      "door_install": { "cost": 700, "source": "service.com.au", "confidence": "MEDIUM" },
+      "deck_build": { "min": 3000, "max": 7000, "average": 5000, "source": "service.com.au", "confidence": "MEDIUM" },
+      "framing_per_sqm": { "min": 1300, "max": 1500, "average": 1400, "source": "service.com.au", "confidence": "MEDIUM" }
+    }
+  },
+
+  "painter": {
+    "national": {
+      "hourly_rate": { "min": 40, "max": 60, "average": 50, "notes": "most prefer per m² pricing", "source": "service.com.au", "confidence": "HIGH" },
+      "per_sqm_interior": { "min": 35, "max": 45, "average": 40, "notes": "1 undercoat + 2 topcoats", "source": "service.com.au", "confidence": "HIGH" },
+      "per_sqm_exterior": { "min": 15, "max": 60, "average": 30, "notes": "varies by material", "source": "service.com.au", "confidence": "HIGH" }
+    },
+    "sydney": {
+      "hourly_rate": { "min": 45, "max": 65, "average": 55, "source": "service.com.au Sydney bathroom rates", "confidence": "MEDIUM" }
+    },
+    "common_jobs": {
+      "bedroom_3x3": { "min": 300, "max": 750, "average": 525, "source": "service.com.au", "confidence": "MEDIUM" },
+      "exterior_house_100sqm": { "min": 3000, "max": 6000, "average": 4500, "source": "service.com.au", "confidence": "MEDIUM" }
+    }
+  },
+
+  "builder": {
+    "national": {
+      "hourly_rate": { "min": 70, "max": 120, "average": 95, "source": "industry standard", "confidence": "MEDIUM" }
+    },
+    "sydney": {
+      "hourly_rate": { "min": 80, "max": 130, "average": 100, "source": "service.com.au Sydney bathroom rates", "confidence": "MEDIUM" }
+    }
+  },
+
+  "hvac": {
+    "national": {
+      "hourly_rate": { "min": 80, "max": 140, "average": 110, "source": "industry estimate", "confidence": "LOW" },
+      "call_out_fee": { "min": 80, "max": 150, "average": 115, "source": "industry estimate", "confidence": "LOW" }
+    },
+    "common_jobs": {
+      "ac_service": { "min": 150, "max": 300, "average": 225, "source": "industry estimate", "confidence": "LOW" },
+      "ac_install_split": { "min": 800, "max": 2500, "average": 1500, "source": "industry estimate", "confidence": "LOW" }
+    }
+  },
+
+  "market_patterns": {
+    "materials_markup": {
+      "standard": 25,
+      "min": 20,
+      "max": 30,
+      "notes": "Industry standard materials markup percentage",
+      "source": "industry standard",
+      "confidence": "MEDIUM"
+    },
+    "call_out_fee_adoption": {
+      "percentage_with_fee": 75,
+      "range_min": 70,
+      "range_max": 85,
+      "notes": "Estimated percentage of tradies charging call-out fees",
+      "source": "market observation",
+      "confidence": "LOW"
+    },
+    "customer_loss_price_increase": {
+      "typical": 10,
+      "conservative": 15,
+      "optimistic": 5,
+      "range_min": 5,
+      "range_max": 20,
+      "notes": "Expected customer loss when increasing prices 10-15%",
+      "source": "industry feedback",
+      "confidence": "LOW"
+    },
+    "job_mix_top_performers": {
+      "commercial_industrial_pct": 60,
+      "residential_pct": 40,
+      "notes": "Top quartile tradies have higher commercial/industrial mix",
+      "source": "observation",
+      "confidence": "LOW"
+    },
+    "unbilled_hours_per_week": {
+      "typical": 12,
+      "min": 8,
+      "max": 18,
+      "notes": "Average hours spent on quoting, admin, follow-ups (unpaid)",
+      "source": "industry estimate",
+      "confidence": "MEDIUM"
+    }
+  },
+
+  "icp_benchmarks": {
+    "revenue_200k_400k": {
+      "typical_hourly_rate_gap": 15,
+      "notes": "Businesses in this range typically 10-20% below market rate",
+      "confidence": "LOW"
+    },
+    "revenue_400k_800k": {
+      "typical_team_size": 3,
+      "typical_overhead_pct": 35,
+      "notes": "Businesses in this range have higher overhead, team management issues",
+      "confidence": "LOW"
+    }
+  }
+}

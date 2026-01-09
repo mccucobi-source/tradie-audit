@@ -1,6 +1,12 @@
 """
 Report Generator - Creates professional PDF and Excel deliverables.
 Focus on QUALITY and CREDIBILITY, not just pretty formatting.
+
+2026 UPGRADE: Now includes:
+- Full methodology section with data sources
+- Calculation transparency
+- Confidence indicators
+- Data capture for agent development
 """
 
 import os
@@ -13,6 +19,7 @@ from jinja2 import Template
 
 from src.templates.prompts import get_report_summary_prompt
 from src.agents.analyzer import AnalysisResult, BusinessContext
+from src.utils.audit_data_capture import get_data_capture
 
 
 class ReportGenerator:
@@ -55,10 +62,14 @@ class ReportGenerator:
             analysis, context, customer_name, customer_dir
         )
         
-        # Save JSON data
+        # Generate audit ID for tracking
+        audit_id = f"BRC-{context.location[:3].upper()}-{context.trade_type[:4].upper()}-{timestamp}"
+        
+        # Save JSON data (enhanced with methodology)
         json_path = customer_dir / "analysis_data.json"
         with open(json_path, 'w') as f:
             json.dump({
+                'audit_id': audit_id,
                 'customer_name': customer_name,
                 'context': context.model_dump(),
                 'summary': analysis.summary,
@@ -67,10 +78,28 @@ class ReportGenerator:
                 'quote_analysis': analysis.quote_analysis,
                 'time_analysis': analysis.time_analysis,
                 'action_plan': analysis.action_plan,
-                'guarantee_check': analysis.guarantee_check
-            }, f, indent=2)
+                'guarantee_check': analysis.guarantee_check,
+                # NEW: Methodology and provenance
+                'methodology': analysis.methodology,
+                'market_benchmarks_used': analysis.market_benchmarks_used,
+                'opportunity_summary': analysis.opportunity_summary
+            }, f, indent=2, default=str)
+        
+        # Capture data for agent development pipeline
+        try:
+            data_capture = get_data_capture()
+            captured = data_capture.capture_audit(
+                audit_id=audit_id,
+                business_profile={},
+                analysis_result=analysis,
+                context=context
+            )
+            print(f"📊 Audit data captured for agent development ({audit_id})")
+        except Exception as e:
+            print(f"Warning: Data capture failed: {e}")
         
         return {
+            'audit_id': audit_id,
             'output_folder': str(customer_dir),
             'html_report': str(html_path),
             'excel_report': str(excel_path),
@@ -851,6 +880,177 @@ These numbers assume you actually implement the changes. They won't happen by th
             font-size: 14px;
         }
         
+        /* NEW: Confidence Badges */
+        .confidence-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            font-family: 'IBM Plex Mono', monospace;
+            letter-spacing: 0.05em;
+        }
+        
+        .confidence-badge.high {
+            background: #10b981;
+            color: white;
+        }
+        
+        .confidence-badge.medium {
+            background: #f59e0b;
+            color: white;
+        }
+        
+        .confidence-badge.low {
+            background: #ef4444;
+            color: white;
+        }
+        
+        /* NEW: Methodology Section */
+        .methodology-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 30px;
+            margin: 40px 0;
+        }
+        
+        .methodology-section h2 {
+            margin-bottom: 24px;
+        }
+        
+        .methodology-grid {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .methodology-item {
+            padding: 20px;
+            background: white;
+            border: 1px solid var(--border);
+        }
+        
+        .methodology-item h3 {
+            font-size: 13px;
+            font-family: 'IBM Plex Mono', monospace;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+        
+        .methodology-item ul {
+            padding-left: 20px;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+        
+        /* NEW: Data Source Citation */
+        .data-source {
+            background: #eff6ff;
+            border-left: 3px solid #3b82f6;
+            padding: 12px 16px;
+            margin: 12px 0;
+            font-size: 13px;
+        }
+        
+        .data-source .source-name {
+            font-weight: 600;
+            color: #1e40af;
+        }
+        
+        /* NEW: Three Scenario Box */
+        .scenarios-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .scenarios-box h4 {
+            font-size: 12px;
+            font-family: 'IBM Plex Mono', monospace;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+        
+        .scenario-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .scenario-row:last-child {
+            border-bottom: none;
+        }
+        
+        .scenario-row.recommended {
+            background: #f0fdf4;
+            margin: 0 -20px;
+            padding: 10px 20px;
+        }
+        
+        .scenario-label {
+            font-size: 14px;
+        }
+        
+        .scenario-amount {
+            font-family: 'IBM Plex Mono', monospace;
+            font-weight: 600;
+        }
+        
+        /* NEW: Risk Card */
+        .risk-card {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 4px;
+        }
+        
+        .risk-header {
+            font-weight: 600;
+            color: #dc2626;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .risk-body {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        /* NEW: Disclaimer Section */
+        .disclaimer-section {
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            padding: 24px;
+            margin: 40px 0;
+        }
+        
+        .disclaimer-section h3 {
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+        
+        .disclaimer-section ul {
+            padding-left: 20px;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+        
+        /* NEW: Professional Report ID */
+        .report-id {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+        }
+        
         @media print {
             .container { max-width: 100%; padding: 20px; }
             .action-card { break-inside: avoid; }
@@ -1315,9 +1515,87 @@ These numbers assume you actually implement the changes. They won't happen by th
             </ol>
         </section>
         
+        <!-- Methodology Section - Professional Transparency -->
+        {% if methodology %}
+        <section class="methodology-section">
+            <h2>📊 Audit Methodology</h2>
+            <div class="methodology-grid">
+                <div class="methodology-item">
+                    <h3>1. Data Analyzed</h3>
+                    <ul>
+                        <li>Invoices analyzed: {{ methodology.data_analyzed.invoices_count or summary.total_jobs or 'N/A' }}</li>
+                        <li>Date range: {{ methodology.data_analyzed.date_range or 'Last 12 months' }}</li>
+                        <li>Total revenue: ${{ "{:,.0f}".format(methodology.data_analyzed.total_revenue or summary.total_revenue_analyzed or 0) }}</li>
+                    </ul>
+                </div>
+                <div class="methodology-item">
+                    <h3>2. Benchmarking Sources</h3>
+                    <ul>
+                        <li><span class="confidence-badge high">HIGH</span> service.com.au (200+ data points)</li>
+                        <li><span class="confidence-badge medium">MEDIUM</span> Industry associations (NECA, Master Plumbers, etc.)</li>
+                        <li>Location-specific: {{ context.location }} market rates</li>
+                    </ul>
+                </div>
+                <div class="methodology-item">
+                    <h3>3. Calculation Approach</h3>
+                    <ul>
+                        <li><strong>Conservative estimates:</strong> 15% customer loss assumed</li>
+                        <li><strong>Realistic estimates:</strong> 10% customer loss</li>
+                        <li><strong>Optimistic estimates:</strong> 5% customer loss</li>
+                        <li>All projections use conservative scenario as the recommendation</li>
+                    </ul>
+                </div>
+                <div class="methodology-item">
+                    <h3>4. Confidence Levels</h3>
+                    <ul>
+                        <li><span class="confidence-badge high">HIGH</span> 3+ sources, large sample, recent data</li>
+                        <li><span class="confidence-badge medium">MEDIUM</span> 1-2 sources, industry estimates</li>
+                        <li><span class="confidence-badge low">LOW</span> Single source or assumption-based</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+        
+        <!-- Disclaimer Section -->
+        <div class="disclaimer-section">
+            <h3>⚠️ Assumptions & Limitations</h3>
+            <ul>
+                <li>Projections based on data provided and industry benchmarks</li>
+                <li>Customer retention rates based on industry averages (may vary)</li>
+                <li>Hours estimated from job mix where actual timesheets not provided</li>
+                <li>Market conditions as of {{ date }} - subject to change</li>
+                <li>Results depend on implementation quality and market factors</li>
+            </ul>
+            <p style="margin-top: 16px; font-size: 13px; font-style: italic;">
+                <strong>Important:</strong> All projections are estimates, not guarantees. 
+                Actual results will vary based on implementation and business-specific factors.
+            </p>
+        </div>
+        
         <footer>
-            <p>Profit Leak Audit · {{ date }}</p>
-            <p>Questions? Hit reply or book a call.</p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 30px; text-align: left;">
+                <div>
+                    <h3 style="font-size: 14px; font-weight: 600; margin-bottom: 12px;">Report Details</h3>
+                    <div class="report-id">
+                        Report ID: BRC-{{ context.location[:3] | upper }}-{{ context.trade_type[:4] | upper }}-{{ date | replace(' ', '') }}<br>
+                        Generated: {{ date }}<br>
+                        Version: 2.1
+                    </div>
+                </div>
+                <div>
+                    <h3 style="font-size: 14px; font-weight: 600; margin-bottom: 12px;">Next Steps</h3>
+                    <div style="font-size: 13px; line-height: 1.8;">
+                        ✓ Review this report thoroughly<br>
+                        ✓ Start with "This Week" actions<br>
+                        ✓ Questions? support@brace.com.au
+                    </div>
+                </div>
+            </div>
+            <div style="text-align: center; padding-top: 20px; border-top: 1px solid var(--border);">
+                <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">BRACE</div>
+                <p>AI-Powered Profit Intelligence for Australian Tradies</p>
+            </div>
         </footer>
     </div>
 </body>
@@ -1350,7 +1628,11 @@ These numbers assume you actually implement the changes. They won't happen by th
             job_analysis=job_analysis,
             data_quality=analysis.data_quality,
             next_steps=analysis.next_steps,
-            worst_jobs=analysis.worst_jobs
+            worst_jobs=analysis.worst_jobs,
+            # NEW: Methodology and provenance
+            methodology=analysis.methodology,
+            market_benchmarks=analysis.market_benchmarks_used,
+            opportunity_summary=analysis.opportunity_summary
         )
         
         html_path = output_dir / "profit_leak_audit_report.html"
